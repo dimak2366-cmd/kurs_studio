@@ -98,17 +98,6 @@ public sealed class RequestsReviewViewModel : ViewModelBase
     {
         if (SelectedRequest == null) return;
 
-        var dialog = new RejectReasonDialog(
-            $"Согласовать заявку #{SelectedRequest.Id} на {SelectedRequest.Amount:N2} BYN?\n" +
-            "При желании добавьте комментарий (необязательно) — оставьте пустым, чтобы пропустить.")
-        {
-            Title = "Согласование заявки"
-        };
-        var owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive);
-        if (owner != null) dialog.Owner = owner;
-
-        // Для approve используем тот же диалог, но комментарий необязателен — упрощаем: согласовываем без комментария.
-        // Создаём простой MessageBox для approve.
         var confirm = MessageBox.Show(
             $"Согласовать заявку #{SelectedRequest.Id} на {SelectedRequest.Amount:N2} BYN " +
             $"по статье «{SelectedRequest.ExpenseItemName}»?",

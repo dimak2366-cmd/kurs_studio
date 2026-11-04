@@ -118,7 +118,13 @@ public class AnalysisController : ControllerBase
 
         var qPlan = item.Quantity;
         var pPlan = item.Price;
-        var qFact = qPlan; // нет отдельного учёта фактического количества
+
+        // Упрощение курсовой: в модели ActualExpense нет отдельного поля ActualQuantity,
+        // поэтому фактическое количество принимается равным плановому (qFact = qPlan),
+        // а фактическая цена вычисляется как средняя: pFact = Σ(Факт) / Q_план.
+        // В промышленной системе потребовалось бы поле ActualQuantity в ActualExpense
+        // или отдельная таблица детализации расхода по количеству и цене.
+        var qFact = qPlan;
         var factSum = item.ActualExpenses.Sum(a => a.Amount);
         var pFact = qFact > 0 ? Math.Round(factSum / qFact, 4) : 0m;
 
@@ -173,6 +179,11 @@ public class AnalysisController : ControllerBase
 
         var chPlan = item.Quantity;
         var zPlan = item.Price;
+
+        // Упрощение курсовой: аналогично материалам — фактическая численность
+        // принимается равной плановой (chFact = chPlan), а фактическая средняя
+        // зарплата вычисляется как zFact = Σ(Факт) / Ч_план.
+        // В промышленной системе нужна таблица табельного учёта (численность по месяцам).
         var chFact = chPlan;
         var factSum = item.ActualExpenses.Sum(a => a.Amount);
         var zFact = chFact > 0 ? Math.Round(factSum / chFact, 4) : 0m;
