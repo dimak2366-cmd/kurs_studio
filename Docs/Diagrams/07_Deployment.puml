@@ -1,0 +1,47 @@
+﻿@startuml 07_Deployment
+skinparam defaultFontName "Arial"
+skinparam componentStyle rectangle
+title Диаграмма развёртывания программного средства
+
+node "Рабочая станция пользователя\nWindows 10 / Windows 11" as Workstation {
+  component "Клиентское приложение\nWindows Presentation Foundation\n(.NET 8)" as Client
+}
+
+node "Сервер приложений\nWindows Server / Linux" as ServerNode {
+  component "Сервер приложений\nASP.NET Core Web API\n(.NET 8)" as Api
+  component "Entity Framework Core\n(Npgsql)" as Orm
+}
+
+node "Сервер СУБД" as DbNode {
+  database "PostgreSQL 18\nбаза данных «budget_institute»" as Db
+}
+
+cloud "Локальная сеть TCP/IP" as Net {
+  label "REST / JSON\nHTTP, порт 5155"
+}
+
+Workstation -down-> Net : HTTP/JSON\nTCP порт 5155
+Net -down-> ServerNode
+Api --> Orm
+Orm --> Db : TCP порт 5432\n(протокол PostgreSQL)
+
+note right of Workstation
+  Требования:
+  - .NET 8 Runtime
+  - Windows 10/11
+end note
+
+note right of ServerNode
+  Требования:
+  - .NET 8 Runtime
+  - открытый порт 5155
+end note
+
+note right of DbNode
+  Требования:
+  - PostgreSQL 18
+  - открытый порт 5432
+  - учётная запись postgres
+end note
+
+@enduml

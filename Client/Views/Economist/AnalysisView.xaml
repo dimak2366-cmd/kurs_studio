@@ -1,0 +1,233 @@
+﻿<UserControl x:Class="Client.Views.Economist.AnalysisView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             FontFamily="Times New Roman" FontSize="14">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Анализ исполнения сметы"
+                   FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12"/>
+
+        <WrapPanel Grid.Row="1" Margin="0,0,0,8">
+            <TextBlock Text="Смета:" VerticalAlignment="Center" Margin="0,0,6,0"/>
+            <ComboBox ItemsSource="{Binding Smetas}" SelectedItem="{Binding SelectedSmeta}"
+                      DisplayMemberPath="ProjectCode" Width="260" Height="26" Margin="0,0,8,4"/>
+            <Button Content="Пересчитать" Command="{Binding ReloadDeviationCommand}" Padding="12,6"/>
+        </WrapPanel>
+
+        <TabControl Grid.Row="2">
+            <!-- Tab 1: План-факт -->
+            <TabItem Header="План-факт">
+                <Grid Margin="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Background="#F5F8FC" BorderBrush="#CCD6E0" BorderThickness="1" Padding="12" Margin="0,0,0,12">
+                        <WrapPanel>
+                            <TextBlock Margin="0,0,16,0">
+                                <Run Text="Итого план: "/>
+                                <Run Text="{Binding Deviation.TotalPlan, StringFormat=N2}" FontWeight="Bold"/>
+                                <Run Text=" BYN"/>
+                            </TextBlock>
+                            <TextBlock Margin="0,0,16,0">
+                                <Run Text="Итого факт: "/>
+                                <Run Text="{Binding Deviation.TotalFact, StringFormat=N2}" FontWeight="Bold"/>
+                                <Run Text=" BYN"/>
+                            </TextBlock>
+                            <TextBlock Margin="0,0,16,0">
+                                <Run Text="Абсолютное отклонение: "/>
+                                <Run Text="{Binding Deviation.TotalAbsolute, StringFormat=N2}" FontWeight="Bold"/>
+                                <Run Text=" BYN"/>
+                            </TextBlock>
+                            <TextBlock>
+                                <Run Text="Относительное: "/>
+                                <Run Text="{Binding Deviation.TotalRelativePercent, StringFormat=F2}" FontWeight="Bold"/>
+                                <Run Text=" %"/>
+                            </TextBlock>
+                        </WrapPanel>
+                    </Border>
+
+                    <DataGrid Grid.Row="2" ItemsSource="{Binding Deviation.Items}"
+                              AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
+                              HeadersVisibility="Column" RowHeaderWidth="0" GridLinesVisibility="Horizontal">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID"             Binding="{Binding ExpenseItemId}" Width="50"/>
+                            <DataGridTextColumn Header="Статья"         Binding="{Binding Name}" Width="*"/>
+                            <DataGridTextColumn Header="КОСГУ"          Binding="{Binding KosguCode}" Width="70"/>
+                            <DataGridTextColumn Header="План, BYN"      Binding="{Binding Plan, StringFormat=N2}" Width="120"/>
+                            <DataGridTextColumn Header="Факт, BYN"      Binding="{Binding Fact, StringFormat=N2}" Width="120"/>
+                            <DataGridTextColumn Header="Отклонение, BYN" Binding="{Binding Absolute, StringFormat=N2}" Width="130"/>
+                            <DataGridTextColumn Header="Отклонение, %"  Binding="{Binding RelativePercent, StringFormat=F2}" Width="120"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- Tab 2: Материалы -->
+            <TabItem Header="Материалы (цепные подстановки)">
+                <Grid Margin="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
+                        <TextBlock Text="Статья:" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <ComboBox ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedMaterialItem}"
+                                  DisplayMemberPath="Name" Width="260" Height="26" Margin="0,0,8,0"/>
+                        <Button Content="Автозаполнить" Command="{Binding AutofillMaterialsCommand}" Padding="12,4" Margin="0,0,8,0"/>
+                        <Button Content="Рассчитать" Command="{Binding CalculateMaterialsCommand}" Padding="12,4" FontWeight="SemiBold"/>
+                    </StackPanel>
+
+                    <Grid Grid.Row="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                            <TextBlock Text="Количество (план)"/>
+                            <TextBox Text="{Binding MatQPlan, UpdateSourceTrigger=PropertyChanged}" Height="28" Padding="4"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="0,0,8,0">
+                            <TextBlock Text="Количество (факт)"/>
+                            <TextBox Text="{Binding MatQFact, UpdateSourceTrigger=PropertyChanged}" Height="28" Padding="4"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Margin="0,0,8,0">
+                            <TextBlock Text="Цена (план)"/>
+                            <TextBox Text="{Binding MatPPlan, UpdateSourceTrigger=PropertyChanged}" Height="28" Padding="4"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="3">
+                            <TextBlock Text="Цена (факт)"/>
+                            <TextBox Text="{Binding MatPFact, UpdateSourceTrigger=PropertyChanged}" Height="28" Padding="4"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Grid.Row="2" Background="#F5F8FC" BorderBrush="#CCD6E0" BorderThickness="1" Padding="12" Margin="0,0,0,12"
+                            Visibility="{Binding MaterialResult, Converter={StaticResource NullToCollapsedConverter}}">
+                        <StackPanel>
+                            <TextBlock FontWeight="SemiBold" Margin="0,0,0,6">Результат (формулы 3 и 4):</TextBlock>
+                            <TextBlock>
+                                <Run Text="План (Q×P): "/>
+                                <Run Text="{Binding MaterialResult.PlanTotal, StringFormat=N2}" FontWeight="Bold"/>
+                                <Run Text=" BYN; Факт: "/>
+                                <Run Text="{Binding MaterialResult.FactTotal, StringFormat=N2}" FontWeight="Bold"/>
+                                <Run Text=" BYN."/>
+                            </TextBlock>
+                            <TextBlock>
+                                <Run Text="Общее отклонение: "/>
+                                <Run Text="{Binding MaterialResult.TotalDeviation, StringFormat=N2}" FontWeight="Bold"/>
+                                <Run Text=" BYN."/>
+                            </TextBlock>
+                            <TextBlock>
+                                <Run Text="Влияние количества (ΔQ): "/>
+                                <Run Text="{Binding MaterialResult.QImpact, StringFormat=N2}" FontWeight="Bold"/>
+                                <Run Text=" BYN."/>
+                            </TextBlock>
+                            <TextBlock>
+                                <Run Text="Влияние цены (ΔP): "/>
+                                <Run Text="{Binding MaterialResult.PImpact, StringFormat=N2}" FontWeight="Bold"/>
+                                <Run Text=" BYN."/>
+                            </TextBlock>
+                            <TextBlock Margin="0,6,0,0">
+                                <Run Text="Проверка суммы (ΔQ + ΔP = Δ): "/>
+                                <Run Text="{Binding MaterialResult.CheckPassed}" FontWeight="Bold"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- Tab 3: ФОТ -->
+            <TabItem Header="ФОТ (цепные подстановки)">
+                <Grid Margin="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
+                        <TextBlock Text="Статья:" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <ComboBox ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedLaborItem}"
+                                  DisplayMemberPath="Name" Width="260" Height="26" Margin="0,0,8,0"/>
+                        <Button Content="Автозаполнить" Command="{Binding AutofillLaborCommand}" Padding="12,4" Margin="0,0,8,0"/>
+                        <Button Content="Рассчитать" Command="{Binding CalculateLaborCommand}" Padding="12,4" FontWeight="SemiBold"/>
+                    </StackPanel>
+
+                    <Grid Grid.Row="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                            <TextBlock Text="Численность (план)"/>
+                            <TextBox Text="{Binding LabChPlan, UpdateSourceTrigger=PropertyChanged}" Height="28" Padding="4"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="0,0,8,0">
+                            <TextBlock Text="Численность (факт)"/>
+                            <TextBox Text="{Binding LabChFact, UpdateSourceTrigger=PropertyChanged}" Height="28" Padding="4"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Margin="0,0,8,0">
+                            <TextBlock Text="Ср. зарплата (план)"/>
+                            <TextBox Text="{Binding LabZPlan, UpdateSourceTrigger=PropertyChanged}" Height="28" Padding="4"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="3">
+                            <TextBlock Text="Ср. зарплата (факт)"/>
+                            <TextBox Text="{Binding LabZFact, UpdateSourceTrigger=PropertyChanged}" Height="28" Padding="4"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Grid.Row="2" Background="#F5F8FC" BorderBrush="#CCD6E0" BorderThickness="1" Padding="12" Margin="0,0,0,12"
+                            Visibility="{Binding LaborResult, Converter={StaticResource NullToCollapsedConverter}}">
+                        <StackPanel>
+                            <TextBlock FontWeight="SemiBold" Margin="0,0,0,6">Результат (формулы 5 и 6):</TextBlock>
+                            <TextBlock>
+                                <Run Text="План (Ч×З): "/>
+                                <Run Text="{Binding LaborResult.PlanTotal, StringFormat=N2}" FontWeight="Bold"/>
+                                <Run Text=" BYN; Факт: "/>
+                                <Run Text="{Binding LaborResult.FactTotal, StringFormat=N2}" FontWeight="Bold"/>
+                                <Run Text=" BYN."/>
+                            </TextBlock>
+                            <TextBlock>
+                                <Run Text="Общее отклонение: "/>
+                                <Run Text="{Binding LaborResult.TotalDeviation, StringFormat=N2}" FontWeight="Bold"/>
+                                <Run Text=" BYN."/>
+                            </TextBlock>
+                            <TextBlock>
+                                <Run Text="Влияние численности (ΔЧ): "/>
+                                <Run Text="{Binding LaborResult.ChImpact, StringFormat=N2}" FontWeight="Bold"/>
+                                <Run Text=" BYN."/>
+                            </TextBlock>
+                            <TextBlock>
+                                <Run Text="Влияние зарплаты (ΔЗ): "/>
+                                <Run Text="{Binding LaborResult.ZImpact, StringFormat=N2}" FontWeight="Bold"/>
+                                <Run Text=" BYN."/>
+                            </TextBlock>
+                            <TextBlock Margin="0,6,0,0">
+                                <Run Text="Проверка суммы (ΔЧ + ΔЗ = Δ): "/>
+                                <Run Text="{Binding LaborResult.CheckPassed}" FontWeight="Bold"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Foreground="#555" Margin="0,8,0,0"/>
+    </Grid>
+</UserControl>

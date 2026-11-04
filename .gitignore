@@ -1,0 +1,14 @@
+# Build artifacts
+[Bb]in/
+[Oo]bj/
+.vs/
+
+# User files
+*.user
+*.suo
+
+# Backups — не коммитим БД-дампы
+Backups/*.backup
+
+# Локальные секреты / артефакты
+*.log

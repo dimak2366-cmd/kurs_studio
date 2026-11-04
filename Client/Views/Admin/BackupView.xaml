@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="Client.Views.Admin.BackupView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             FontFamily="Times New Roman" FontSize="14">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Резервное копирование базы данных"
+                   FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12"/>
+
+        <StackPanel Grid.Row="1">
+            <WrapPanel Margin="0,0,0,8">
+                <Button Content="Обновить список"  Command="{Binding LoadCommand}"    Padding="12,6" Margin="0,0,8,4"/>
+                <Button Content="Создать копию"    Command="{Binding CreateCommand}"  Padding="12,6" Margin="0,0,8,4"/>
+                <Button Content="Восстановить БД"  Command="{Binding RestoreCommand}" Padding="12,6" Margin="0,0,8,4" Foreground="DarkRed"/>
+            </WrapPanel>
+
+            <DataGrid ItemsSource="{Binding Backups}"
+                      SelectedItem="{Binding SelectedBackup}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserAddRows="False"
+                      HeadersVisibility="Column"
+                      GridLinesVisibility="Horizontal"
+                      RowHeaderWidth="0"
+                      BorderBrush="#CCD6E0" BorderThickness="1">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Имя файла" Binding="{Binding FileName}" Width="*"/>
+                    <DataGridTextColumn Header="Размер, байт" Binding="{Binding SizeBytes}" Width="140"/>
+                    <DataGridTextColumn Header="Создан"   Binding="{Binding CreatedAt, StringFormat=\{0:yyyy-MM-dd HH:mm:ss\}}" Width="180"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <TextBlock Text="Восстановление перезапишет текущее состояние базы данных."
+                       Foreground="DarkRed" FontStyle="Italic" Margin="0,8,0,0"/>
+        </StackPanel>
+
+        <TextBlock Grid.Row="2" Text="{Binding StatusMessage}" Foreground="#555" Margin="0,8,0,0"/>
+    </Grid>
+</UserControl>

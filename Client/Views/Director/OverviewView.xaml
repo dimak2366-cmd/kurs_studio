@@ -1,0 +1,92 @@
+﻿<UserControl x:Class="Client.Views.Director.OverviewView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             FontFamily="Times New Roman" FontSize="14">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Сводный бюджет института"
+                   FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12"/>
+
+        <WrapPanel Grid.Row="1" Margin="0,0,0,16">
+            <Border Background="#E8F1FA" BorderBrush="#88AECC" BorderThickness="1" Padding="16,12" Margin="0,0,12,12" MinWidth="220">
+                <StackPanel>
+                    <TextBlock Text="Сметы на утверждении" Foreground="#2A5A7D" FontSize="12"/>
+                    <TextBlock Text="{Binding SmetasPending}" FontSize="28" FontWeight="Bold" Foreground="#2A5A7D"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="#FDF6E3" BorderBrush="#C9A83A" BorderThickness="1" Padding="16,12" Margin="0,0,12,12" MinWidth="220">
+                <StackPanel>
+                    <TextBlock Text="Отчёты на утверждении" Foreground="#7A6410" FontSize="12"/>
+                    <TextBlock Text="{Binding ReportsPending}" FontSize="28" FontWeight="Bold" Foreground="#7A6410"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="#FBE9E7" BorderBrush="#C06A62" BorderThickness="1" Padding="16,12" Margin="0,0,12,12" MinWidth="220">
+                <StackPanel>
+                    <TextBlock Text="Заявки на рассмотрении" Foreground="#7A2A22" FontSize="12"/>
+                    <TextBlock Text="{Binding RequestsPending}" FontSize="28" FontWeight="Bold" Foreground="#7A2A22"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="#E8F5E9" BorderBrush="#6BA570" BorderThickness="1" Padding="16,12" Margin="0,0,12,12" MinWidth="260">
+                <StackPanel>
+                    <TextBlock Text="План / факт по всем сметам, BYN" Foreground="#2A5A30" FontSize="12"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                        <TextBlock Text="{Binding TotalPlan, StringFormat=N2}"
+                                   FontSize="20" FontWeight="Bold" Foreground="#2A5A30"/>
+                        <TextBlock Text=" / " FontSize="20" FontWeight="Bold" Foreground="#2A5A30"/>
+                        <TextBlock Text="{Binding TotalFact, StringFormat=N2}"
+                                   FontSize="20" FontWeight="Bold" Foreground="#2A5A30"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                        <TextBlock Text="Отклонение: " Foreground="#2A5A30" FontSize="12"/>
+                        <TextBlock Text="{Binding TotalDeviation, StringFormat=N2}"
+                                   FontWeight="Bold" Foreground="#2A5A30" FontSize="12"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </WrapPanel>
+
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <WrapPanel Grid.Row="0" Margin="0,0,0,8">
+                <Button Content="Обновить" Command="{Binding LoadCommand}" Padding="12,6"/>
+            </WrapPanel>
+
+            <DataGrid Grid.Row="1"
+                      ItemsSource="{Binding Smetas}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserAddRows="False"
+                      HeadersVisibility="Column"
+                      GridLinesVisibility="Horizontal"
+                      RowHeaderWidth="0"
+                      BorderBrush="#CCD6E0"
+                      BorderThickness="1">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID"         Binding="{Binding Id}"                            Width="50"/>
+                    <DataGridTextColumn Header="Проект"     Binding="{Binding ProjectCode}"                   Width="130"/>
+                    <DataGridTextColumn Header="Форма"      Binding="{Binding FormCode}"                      Width="110"/>
+                    <DataGridTextColumn Header="Год"        Binding="{Binding Year}"                          Width="70"/>
+                    <DataGridTextColumn Header="Статус"     Binding="{Binding Status}"                        Width="140"/>
+                    <DataGridTextColumn Header="План, BYN"  Binding="{Binding TotalPlan, StringFormat=N2}"   Width="130"/>
+                    <DataGridTextColumn Header="Факт, BYN"  Binding="{Binding TotalFact, StringFormat=N2}"   Width="130"/>
+                    <DataGridTextColumn Header="Лимит, BYN" Binding="{Binding TotalLimit, StringFormat=N2}"  Width="130"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+        <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Foreground="#555" Margin="0,8,0,0" TextWrapping="Wrap"/>
+    </Grid>
+</UserControl>

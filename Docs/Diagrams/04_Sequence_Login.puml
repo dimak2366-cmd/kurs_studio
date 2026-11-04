@@ -1,0 +1,52 @@
+﻿@startuml 04_Sequence_Login
+title Последовательность «Вход пользователя в систему»
+
+actor Пользователь as User
+participant "Клиент WPF" as Client
+participant "AuthController" as Ctrl
+participant "AuthService" as Auth
+participant "AppDbContext" as Db
+participant "PasswordHasher" as Hasher
+participant "TokenService" as Token
+participant "AuditService" as Audit
+database "PostgreSQL" as Pg
+
+User -> Client : вводит логин и пароль
+Client -> Ctrl : POST /api/auth/login { login, password }
+Ctrl -> Auth : LoginAsync(request)
+Auth -> Db : поиск User по Login
+Db -> Pg : SELECT users WHERE Login = ...
+Pg --> Db : строка или NULL
+Db --> Auth : User или NULL
+
+alt Пользователь не найден
+  Auth --> Ctrl : UnauthorizedAccessException
+  Ctrl --> Client : 401 "Неверный логин или пароль"
+else Учётная запись заблокирована
+  Auth --> Ctrl : UnauthorizedAccessException
+  Ctrl --> Client : 401 "Заблокировано администратором"
+else Учётная запись в LockoutUntil > now
+  Auth --> Ctrl : InvalidOperationException
+  Ctrl --> Client : 423 "Заблокировано до ..."
+else Пароль неверный
+  Auth -> Hasher : Verify(password, salt, hash)
+  Hasher --> Auth : false
+  Auth -> Db : FailedAttempts++ / при 3 — LockoutUntil = now+15min
+  Db -> Pg : UPDATE users
+  Auth -> Audit : LogAsync(userId, "LoginFailed")
+  Auth --> Ctrl : UnauthorizedAccessException / 423
+  Ctrl --> Client : 401 или 423
+else Пароль верный
+  Auth -> Hasher : Verify(password, salt, hash)
+  Hasher --> Auth : true
+  Auth -> Db : FailedAttempts = 0, LockoutUntil = NULL
+  Db -> Pg : UPDATE users
+  Auth -> Token : CreateSession(user)
+  Token --> Auth : SessionInfo { Token, UserId, RoleName, ExpiresAt }
+  Auth -> Audit : LogAsync(userId, "Login")
+  Auth --> Ctrl : LoginResponse
+  Ctrl --> Client : 200 { token, roleName, expiresAt, ... }
+  Client --> User : открывает главное окно (MainShell)
+end
+
+@enduml

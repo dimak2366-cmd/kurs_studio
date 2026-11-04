@@ -1,0 +1,177 @@
+﻿@startuml 02_Classes
+skinparam classAttributeIconSize 0
+skinparam nodesep 40
+skinparam ranksep 40
+title Диаграмма классов предметной области
+
+package "Server.Models" {
+
+  class Role {
+    +Id : int
+    +Name : string
+    +Users : ICollection<User>
+  }
+
+  class User {
+    +Id : int
+    +Login : string
+    +PasswordHash : string
+    +PasswordSalt : string
+    +FullName : string
+    +RoleId : int
+    +DepartmentId : int?
+    +IsBlocked : bool
+    +FailedAttempts : int
+    +LockoutUntil : DateTime?
+    +Role : Role
+    +Department : Department?
+    +ExpenseRequests : ICollection<ExpenseRequest>
+    +AuditLogs : ICollection<AuditLog>
+    +CreatedReports : ICollection<AnalyticReport>
+  }
+
+  class Department {
+    +Id : int
+    +Name : string
+    +Users : ICollection<User>
+    +Projects : ICollection<Project>
+  }
+
+  class Project {
+    +Id : int
+    +Code : string
+    +Name : string
+    +DepartmentId : int
+    +StartDate : DateTime
+    +EndDate : DateTime
+    +Department : Department
+    +Smetas : ICollection<Smeta>
+    +ExpenseRequests : ICollection<ExpenseRequest>
+  }
+
+  class Smeta {
+    +Id : int
+    +ProjectId : int
+    +ParentSmetaId : int?
+    +FormCode : string
+    +Year : int
+    +Status : string
+    +CreatedAt : DateTime
+    +ApprovedAt : DateTime?
+    +RejectReason : string?
+    +Project : Project
+    +ParentSmeta : Smeta?
+    +Changes : ICollection<Smeta>
+    +ExpenseItems : ICollection<ExpenseItem>
+    +AnalyticReports : ICollection<AnalyticReport>
+  }
+
+  class ExpenseItem {
+    +Id : int
+    +SmetaId : int
+    +Name : string
+    +KosguCode : string
+    +PlanAmount : decimal
+    +LimitAmount : decimal
+    +Quantity : decimal
+    +Price : decimal
+    +Smeta : Smeta
+    +ActualExpenses : ICollection<ActualExpense>
+    +ExpenseRequests : ICollection<ExpenseRequest>
+    +ManagementDecisions : ICollection<ManagementDecision>
+  }
+
+  class ActualExpense {
+    +Id : int
+    +ExpenseItemId : int
+    +PeriodId : int
+    +Date : DateTime
+    +Amount : decimal
+    +DocumentType : string
+    +DocumentNumber : string
+    +DocumentDate : DateTime
+    +Status : string
+    +ExpenseItem : ExpenseItem
+    +Period : Period
+  }
+
+  class Period {
+    +Id : int
+    +Year : int
+    +Month : int
+    +IsClosed : bool
+    +ClosedAt : DateTime?
+    +ActualExpenses : ICollection<ActualExpense>
+    +ManagementDecisions : ICollection<ManagementDecision>
+  }
+
+  class ExpenseRequest {
+    +Id : int
+    +ProjectId : int
+    +ExpenseItemId : int
+    +UserId : int
+    +Amount : decimal
+    +Status : string
+    +Comment : string?
+    +CreatedAt : DateTime
+  }
+
+  class AuditLog {
+    +Id : int
+    +UserId : int?
+    +Action : string
+    +Entity : string
+    +EntityId : string
+    +Timestamp : DateTime
+    +Details : string?
+    +User : User?
+  }
+
+  class ErrorLog {
+    +Id : int
+    +Timestamp : DateTime
+    +Level : string
+    +Message : string
+    +StackTrace : string?
+  }
+
+  class AnalyticReport {
+    +Id : int
+    +SmetaId : int
+    +CreatedBy : int
+    +CreatedAt : DateTime
+    +Status : string
+    +Content : string
+    +Smeta : Smeta
+    +CreatedByUser : User
+  }
+
+  class ManagementDecision {
+    +Id : int
+    +ExpenseItemId : int
+    +PeriodId : int
+    +Decision : string
+    +CreatedAt : DateTime
+    +ExpenseItem : ExpenseItem
+    +Period : Period
+  }
+}
+
+Role "1" -- "0..*" User
+Department "1" -- "0..*" User
+Department "1" -- "0..*" Project
+Project "1" -- "0..*" Smeta
+Smeta "0..1" -- "0..*" Smeta : изменения
+Smeta "1" -- "0..*" ExpenseItem
+ExpenseItem "1" -- "0..*" ActualExpense
+Period "1" -- "0..*" ActualExpense
+Project "1" -- "0..*" ExpenseRequest
+ExpenseItem "1" -- "0..*" ExpenseRequest
+User "1" -- "0..*" ExpenseRequest
+User "0..1" -- "0..*" AuditLog
+Smeta "1" -- "0..*" AnalyticReport
+User "1" -- "0..*" AnalyticReport
+ExpenseItem "1" -- "0..*" ManagementDecision
+Period "1" -- "0..*" ManagementDecision
+
+@enduml

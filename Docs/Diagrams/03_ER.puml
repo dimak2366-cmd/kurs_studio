@@ -1,0 +1,157 @@
+﻿@startuml 03_ER
+hide circle
+skinparam linetype ortho
+title Диаграмма «сущность–связь» базы данных
+
+entity "roles" as roles {
+  * Id : serial <<PK>>
+  --
+  Name : varchar(64) <<UNIQUE>>
+}
+
+entity "users" as users {
+  * Id : serial <<PK>>
+  --
+  Login : varchar(64) <<UNIQUE>>
+  PasswordHash : varchar(128)
+  PasswordSalt : varchar(64)
+  FullName : varchar(128)
+  RoleId : int <<FK → roles>>
+  DepartmentId : int <<FK → departments, NULL>>
+  IsBlocked : bool
+  FailedAttempts : int
+  LockoutUntil : timestamptz NULL
+}
+
+entity "departments" as departments {
+  * Id : serial <<PK>>
+  --
+  Name : varchar(128) <<UNIQUE>>
+}
+
+entity "projects" as projects {
+  * Id : serial <<PK>>
+  --
+  Code : varchar(32) <<UNIQUE>>
+  Name : varchar(256)
+  DepartmentId : int <<FK → departments>>
+  StartDate : timestamptz
+  EndDate : timestamptz
+}
+
+entity "smetas" as smetas {
+  * Id : serial <<PK>>
+  --
+  ProjectId : int <<FK → projects>>
+  ParentSmetaId : int <<FK → smetas, NULL>>
+  FormCode : varchar(32)
+  Year : int
+  Status : varchar(32)
+  CreatedAt : timestamptz
+  ApprovedAt : timestamptz NULL
+  RejectReason : varchar(512) NULL
+}
+
+entity "expense_items" as expense_items {
+  * Id : serial <<PK>>
+  --
+  SmetaId : int <<FK → smetas>>
+  Name : varchar(128)
+  KosguCode : varchar(16)
+  PlanAmount : numeric(18,2)
+  LimitAmount : numeric(18,2)
+  Quantity : numeric(18,2)
+  Price : numeric(18,2)
+}
+
+entity "actual_expenses" as actual_expenses {
+  * Id : serial <<PK>>
+  --
+  ExpenseItemId : int <<FK → expense_items>>
+  PeriodId : int <<FK → periods>>
+  Date : timestamptz
+  Amount : numeric(18,2)
+  DocumentType : varchar(32)
+  DocumentNumber : varchar(64)
+  DocumentDate : timestamptz
+  Status : varchar(32)
+}
+
+entity "periods" as periods {
+  * Id : serial <<PK>>
+  --
+  Year : int <<UNIQUE(Year,Month)>>
+  Month : int <<UNIQUE(Year,Month)>>
+  IsClosed : bool
+  ClosedAt : timestamptz NULL
+}
+
+entity "expense_requests" as expense_requests {
+  * Id : serial <<PK>>
+  --
+  ProjectId : int <<FK → projects>>
+  ExpenseItemId : int <<FK → expense_items>>
+  UserId : int <<FK → users>>
+  Amount : numeric(18,2)
+  Status : varchar(32)
+  Comment : varchar(512) NULL
+  CreatedAt : timestamptz
+}
+
+entity "audit_logs" as audit_logs {
+  * Id : serial <<PK>>
+  --
+  UserId : int <<FK → users, NULL>>
+  Action : varchar(64)
+  Entity : varchar(64)
+  EntityId : varchar(64)
+  Timestamp : timestamptz
+  Details : varchar(2048) NULL
+}
+
+entity "error_logs" as error_logs {
+  * Id : serial <<PK>>
+  --
+  Timestamp : timestamptz
+  Level : varchar(16)
+  Message : varchar(2048)
+  StackTrace : varchar(8192) NULL
+}
+
+entity "analytic_reports" as analytic_reports {
+  * Id : serial <<PK>>
+  --
+  SmetaId : int <<FK → smetas>>
+  CreatedBy : int <<FK → users>>
+  CreatedAt : timestamptz
+  Status : varchar(32)
+  Content : text
+}
+
+entity "management_decisions" as management_decisions {
+  * Id : serial <<PK>>
+  --
+  ExpenseItemId : int <<FK → expense_items>>
+  PeriodId : int <<FK → periods>>
+  Decision : varchar(2048)
+  CreatedAt : timestamptz
+}
+
+roles ||--o{ users
+departments ||--o{ users
+departments ||--o{ projects
+projects ||--o{ smetas
+smetas ||--o{ smetas : "родитель-изменение"
+smetas ||--o{ expense_items
+expense_items ||--o{ actual_expenses
+periods ||--o{ actual_expenses
+projects ||--o{ expense_requests
+expense_items ||--o{ expense_requests
+users ||--o{ expense_requests
+users ||--o{ audit_logs
+smetas ||--o{ analytic_reports
+users ||--o{ analytic_reports
+expense_items ||--o{ management_decisions
+periods ||--o{ management_decisions
+
+@enduml

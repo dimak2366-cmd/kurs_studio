@@ -1,0 +1,48 @@
+﻿<Window x:Class="Client.Views.Economist.SmetaEditDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Редактирование сметы" Height="560" Width="900"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        FontFamily="Times New Roman" FontSize="14">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" x:Name="HeaderText" Text="Редактирование плановых сумм"
+                   FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
+
+        <TextBlock Grid.Row="1" x:Name="InfoText" Foreground="#555" Margin="0,0,0,12"/>
+
+        <DataGrid Grid.Row="2" x:Name="ItemsGrid"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  HeadersVisibility="Column"
+                  RowHeaderWidth="0"
+                  GridLinesVisibility="All"
+                  BorderBrush="#CCD6E0" BorderThickness="1">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID"             Binding="{Binding Id}" IsReadOnly="True" Width="50"/>
+                <DataGridTextColumn Header="Наименование"   Binding="{Binding Name}" IsReadOnly="True" Width="*"/>
+                <DataGridTextColumn Header="КОСГУ"          Binding="{Binding KosguCode}" IsReadOnly="True" Width="80"/>
+                <DataGridTextColumn Header="План, BYN"      Binding="{Binding PlanAmount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" Width="120"/>
+                <DataGridTextColumn Header="Лимит, BYN"     Binding="{Binding LimitAmount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" Width="120"/>
+                <DataGridTextColumn Header="Кол-во"         Binding="{Binding Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" Width="90"/>
+                <DataGridTextColumn Header="Цена, BYN"      Binding="{Binding Price, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" Width="110"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <TextBlock Grid.Row="3" x:Name="ErrorText" Foreground="DarkRed" TextWrapping="Wrap" Margin="0,6,0,0"/>
+
+        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+            <Button Content="Отмена" IsCancel="True" Padding="16,4" Margin="0,0,8,0"/>
+            <Button Content="Сохранить" Click="Save_Click" Padding="16,4" IsDefault="True"/>
+        </StackPanel>
+    </Grid>
+</Window>

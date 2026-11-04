@@ -1,0 +1,91 @@
+﻿@startuml 01_UseCase
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+left to right direction
+
+title Диаграмма вариантов использования
+
+actor "Администратор" as Admin
+actor "Директор" as Director
+actor "Главный экономист" as Economist
+actor "Руководитель отдела" as Head
+actor "Бухгалтер" as Accountant
+
+rectangle "Программное средство управления бюджетом" {
+  usecase "Войти в систему" as UC_Login
+  usecase "Сменить пароль" as UC_ChangePwd
+
+  usecase "Управлять пользователями" as UC_Users
+  usecase "Управлять отделами" as UC_Dept
+  usecase "Управлять проектами" as UC_Proj
+  usecase "Просматривать журналы" as UC_Logs
+  usecase "Создать резервную копию" as UC_Backup
+  usecase "Настроить сервер" as UC_Settings
+
+  usecase "Создать смету" as UC_SmetaCreate
+  usecase "Утвердить смету" as UC_SmetaApprove
+  usecase "Отклонить смету" as UC_SmetaReject
+  usecase "Сформировать изменение" as UC_SmetaChange
+  usecase "Установить лимиты" as UC_Limits
+
+  usecase "Ввести фактический расход" as UC_Expense
+  usecase "Скорректировать расход" as UC_ExpenseEdit
+  usecase "Сверить расход" as UC_Verify
+  usecase "Закрыть период" as UC_ClosePeriod
+
+  usecase "Сформировать отчёт" as UC_ReportCreate
+  usecase "Утвердить отчёт" as UC_ReportApprove
+  usecase "Подать заявку на расход" as UC_RequestCreate
+  usecase "Рассмотреть заявку" as UC_RequestReview
+  usecase "Провести факторный анализ" as UC_Analysis
+  usecase "Зарегистрировать решение" as UC_Decision
+  usecase "Просмотреть сметы отдела" as UC_ViewOwn
+}
+
+Admin --> UC_Login
+Director --> UC_Login
+Economist --> UC_Login
+Head --> UC_Login
+Accountant --> UC_Login
+
+Admin --> UC_Users
+Admin --> UC_Dept
+Admin --> UC_Proj
+Admin --> UC_Logs
+Admin --> UC_Backup
+Admin --> UC_Settings
+Admin --> UC_ChangePwd
+
+Economist --> UC_SmetaCreate
+Economist --> UC_SmetaChange
+Economist --> UC_Limits
+Economist --> UC_ReportCreate
+Economist --> UC_RequestReview
+Economist --> UC_Analysis
+Economist --> UC_ChangePwd
+
+Director --> UC_SmetaApprove
+Director --> UC_SmetaReject
+Director --> UC_ReportApprove
+Director --> UC_Decision
+Director --> UC_Analysis
+Director --> UC_ChangePwd
+
+Head --> UC_RequestCreate
+Head --> UC_ViewOwn
+Head --> UC_Analysis
+
+Accountant --> UC_Expense
+Accountant --> UC_ExpenseEdit
+Accountant --> UC_Verify
+Accountant --> UC_ClosePeriod
+Accountant --> UC_ChangePwd
+
+UC_SmetaApprove ..> UC_SmetaCreate : <<extend>>
+UC_SmetaReject ..> UC_SmetaCreate : <<extend>>
+UC_SmetaChange ..> UC_SmetaApprove : <<extend>>
+UC_Verify ..> UC_Expense : <<include>>
+UC_ClosePeriod ..> UC_Verify : <<include>>
+UC_ReportApprove ..> UC_ReportCreate : <<extend>>
+
+@enduml

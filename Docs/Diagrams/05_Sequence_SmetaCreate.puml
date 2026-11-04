@@ -1,0 +1,55 @@
+﻿@startuml 05_Sequence_SmetaCreate
+title Последовательность «Создание и утверждение сметы»
+
+actor "Главный экономист" as Econ
+actor "Директор" as Dir
+participant "Клиент WPF" as Client
+participant "SmetaController" as Ctrl
+participant "SmetaService" as Svc
+participant "AppDbContext" as Db
+participant "AuditService" as Audit
+database "PostgreSQL" as Pg
+
+== Создание сметы ==
+Econ -> Client : нажимает «Создать смету» и заполняет форму
+Client -> Ctrl : POST /api/smeta { projectId, formCode, year, items[] }
+Ctrl -> Ctrl : проверка роли через [AuthorizeRole("Главный экономист")]
+alt Нет роли
+  Ctrl --> Client : 403 Forbidden
+else Роль верна
+  Ctrl -> Svc : CreateAsync(request, userId)
+  Svc -> Db : проверка проекта и дубликата (ProjectId + FormCode + Year)
+  Db -> Pg : SELECT smetas, projects
+  alt Дубликат существует
+    Svc --> Ctrl : InvalidOperationException
+    Ctrl --> Client : 409 Conflict
+  else Данные корректны
+    Svc -> Db : INSERT smetas (Status="На утверждении") + INSERT expense_items[]
+    Db -> Pg : INSERT ... RETURNING Id
+    Svc -> Audit : LogAsync(userId, "Create", "Smeta", id)
+    Svc --> Ctrl : SmetaDetailDto
+    Ctrl --> Client : 201 Created
+    Client --> Econ : смета в таблице со статусом «На утверждении»
+  end
+end
+
+== Утверждение сметы ==
+Dir -> Client : нажимает «Утвердить»
+Client -> Ctrl : POST /api/smeta/{id}/approve
+Ctrl -> Ctrl : проверка роли через [AuthorizeRole("Директор")]
+Ctrl -> Svc : ApproveAsync(id, userId)
+Svc -> Db : загрузка сметы со статьями
+Db -> Pg : SELECT smetas, expense_items
+alt Статус ≠ «На утверждении»
+  Svc --> Ctrl : InvalidOperationException
+  Ctrl --> Client : 409 Conflict
+else Статус «На утверждении» и есть статьи
+  Svc -> Db : Status = "Утверждена", ApprovedAt = now
+  Db -> Pg : UPDATE smetas
+  Svc -> Audit : LogAsync(userId, "Approve", "Smeta", id)
+  Svc --> Ctrl : SmetaDetailDto
+  Ctrl --> Client : 200 OK
+  Client --> Dir : смета исчезла из «На утверждении»
+end
+
+@enduml

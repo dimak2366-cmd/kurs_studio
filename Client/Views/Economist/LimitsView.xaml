@@ -1,0 +1,59 @@
+﻿<UserControl x:Class="Client.Views.Economist.LimitsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             FontFamily="Times New Roman" FontSize="14">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Лимиты бюджетных обязательств"
+                   FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12"/>
+
+        <WrapPanel Grid.Row="1" Margin="0,0,0,8">
+            <TextBlock Text="Смета:" VerticalAlignment="Center" Margin="0,0,6,0"/>
+            <ComboBox ItemsSource="{Binding Smetas}" SelectedItem="{Binding SelectedSmeta}"
+                      DisplayMemberPath="ProjectCode" Width="260" Height="26" Margin="0,0,8,4"/>
+            <Button Content="Проверить превышения" Command="{Binding ReloadCheckCommand}"
+                    Padding="12,6" Margin="0,0,8,4"/>
+            <Button Content="Сохранить лимиты" Command="{Binding SaveLimitsCommand}"
+                    Padding="12,6" Margin="0,0,8,4" FontWeight="SemiBold"/>
+        </WrapPanel>
+
+        <DataGrid Grid.Row="2" ItemsSource="{Binding Items}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="Horizontal"
+                  RowHeaderWidth="0"
+                  BorderBrush="#CCD6E0" BorderThickness="1">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID"          Binding="{Binding ExpenseItemId}" IsReadOnly="True" Width="50"/>
+                <DataGridTextColumn Header="Статья"      Binding="{Binding Name}" IsReadOnly="True" Width="*"/>
+                <DataGridTextColumn Header="КОСГУ"       Binding="{Binding KosguCode}" IsReadOnly="True" Width="70"/>
+                <DataGridTextColumn Header="План, BYN"   Binding="{Binding PlanAmount, StringFormat=N2}" IsReadOnly="True" Width="110"/>
+                <DataGridTextColumn Header="Лимит, BYN"  Binding="{Binding LimitAmount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" Width="120"/>
+                <DataGridTextColumn Header="Факт, BYN"   Binding="{Binding FactAmount, StringFormat=N2}" IsReadOnly="True" Width="110"/>
+                <DataGridTextColumn Header="Остаток"     Binding="{Binding Remaining, StringFormat=N2}" IsReadOnly="True" Width="110"/>
+                <DataGridTextColumn Header="Превышение"  Binding="{Binding Exceeds}" IsReadOnly="True" Width="90"/>
+                <DataGridTextColumn Header="Сумма превыш." Binding="{Binding ExcessAmount, StringFormat=N2}" IsReadOnly="True" Width="110"/>
+            </DataGrid.Columns>
+
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Exceeds}" Value="True">
+                            <Setter Property="Background" Value="#FFF0F0"/>
+                            <Setter Property="Foreground" Value="DarkRed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+        </DataGrid>
+
+        <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Foreground="#555" Margin="0,8,0,0"/>
+    </Grid>
+</UserControl>
