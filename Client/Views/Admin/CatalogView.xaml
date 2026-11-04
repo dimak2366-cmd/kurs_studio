@@ -1,69 +1,91 @@
 ﻿<UserControl x:Class="Client.Views.Admin.CatalogView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             FontFamily="Times New Roman" FontSize="14">
-    <Grid Margin="16">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Справочники" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12"/>
+        <TextBlock Grid.Row="0" Text="Справочник статей расходов (редактируемый)"
+                   FontSize="16" FontWeight="Bold" Margin="0,0,0,8"/>
 
-        <Button Grid.Row="1" Content="Обновить" Command="{Binding LoadCommand}"
-                HorizontalAlignment="Left" Padding="12,6" Margin="0,0,0,12"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,6">
+            <Button Content="Добавить" Command="{Binding AddCommand}" Width="110" Height="28" Margin="0,0,6,0"/>
+            <Button Content="Изменить" Command="{Binding EditCommand}" Width="110" Height="28" Margin="0,0,6,0"/>
+            <Button Content="Удалить" Command="{Binding DeleteCommand}" Width="110" Height="28"/>
+        </StackPanel>
 
-        <Grid Grid.Row="2">
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding CatalogItems}"
+                  SelectedItem="{Binding SelectedCatalogItem, Mode=TwoWay}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserAddRows="False"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="Horizontal">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Код КОСГУ" Binding="{Binding KosguCode}" Width="120"/>
+                <DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="*"/>
+                <DataGridCheckBoxColumn Header="Активен" Binding="{Binding IsActive}" Width="90"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <TextBlock Grid.Row="3" Text="Справочная информация (только для чтения)"
+                   FontSize="14" FontWeight="Bold" Margin="0,16,0,8"/>
+
+        <Grid Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="12"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="12"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Роли -->
-            <Border Grid.Column="0" BorderBrush="#CCD6E0" BorderThickness="1" Margin="0,0,6,0" Padding="8">
-                <StackPanel>
-                    <TextBlock Text="Роли пользователей" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                    <DataGrid ItemsSource="{Binding Roles}" AutoGenerateColumns="False" IsReadOnly="True"
-                              CanUserAddRows="False" HeadersVisibility="Column" RowHeaderWidth="0">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID"    Binding="{Binding Id}"   Width="50"/>
-                            <DataGridTextColumn Header="Роль"  Binding="{Binding Name}" Width="*"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </StackPanel>
-            </Border>
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Роли" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                <DataGrid ItemsSource="{Binding Roles}" AutoGenerateColumns="False"
+                          IsReadOnly="True" CanUserAddRows="False" Height="160">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="50"/>
+                        <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
 
-            <!-- Статьи расходов -->
-            <Border Grid.Column="1" BorderBrush="#CCD6E0" BorderThickness="1" Margin="6,0,6,0" Padding="8">
-                <StackPanel>
-                    <TextBlock Text="Статьи расходов (КОСГУ)" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                    <DataGrid ItemsSource="{Binding ExpenseItems}" AutoGenerateColumns="False" IsReadOnly="True"
-                              CanUserAddRows="False" HeadersVisibility="Column" RowHeaderWidth="0">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="КОСГУ"      Binding="{Binding KosguCode}" Width="80"/>
-                            <DataGridTextColumn Header="Наименование" Binding="{Binding Name}"     Width="*"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </StackPanel>
-            </Border>
+            <StackPanel Grid.Column="2">
+                <TextBlock Text="Статьи из смет" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                <DataGrid ItemsSource="{Binding ExpenseItems}" AutoGenerateColumns="False"
+                          IsReadOnly="True" CanUserAddRows="False" Height="160">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="КОСГУ" Binding="{Binding KosguCode}" Width="70"/>
+                        <DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
 
-            <!-- Формы смет -->
-            <Border Grid.Column="2" BorderBrush="#CCD6E0" BorderThickness="1" Margin="6,0,0,0" Padding="8">
-                <StackPanel>
-                    <TextBlock Text="Формы смет" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                    <DataGrid ItemsSource="{Binding SmetaForms}" AutoGenerateColumns="False" IsReadOnly="True"
-                              CanUserAddRows="False" HeadersVisibility="Column" RowHeaderWidth="0">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Код формы" Binding="{Binding FormCode}" Width="*"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </StackPanel>
-            </Border>
+            <StackPanel Grid.Column="4">
+                <TextBlock Text="Формы смет" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                <DataGrid ItemsSource="{Binding SmetaForms}" AutoGenerateColumns="False"
+                          IsReadOnly="True" CanUserAddRows="False" Height="160">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Код формы" Binding="{Binding FormCode}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
         </Grid>
 
-        <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Foreground="#555" Margin="0,8,0,0"/>
+        <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="0,12,0,0">
+            <Button Content="Обновить" Command="{Binding LoadCommand}" Width="120" Height="28"/>
+        </StackPanel>
+
+        <TextBlock Grid.Row="6" Text="{Binding StatusMessage}"
+                   Foreground="DarkSlateGray" TextWrapping="Wrap" Margin="0,8,0,0"/>
     </Grid>
 </UserControl>
