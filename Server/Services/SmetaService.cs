@@ -45,6 +45,47 @@ public sealed class SmetaService
         return ToDetailDto(smeta);
     }
 
+    /// <summary>
+    /// Все статьи расходов всех смет проекта одним запросом (исправление N+1 на клиенте).
+    /// Проверка прав: руководитель отдела видит только статьи своего отдела.
+    /// </summary>
+    public async Task<List<ExpenseItemDto>> GetItemsByProjectAsync(
+        int projectId, SessionInfo session, CancellationToken cancellationToken)
+    {
+        var project = await _db.Projects
+            .Where(p => p.Id == projectId)
+            .Select(p => new { p.Id, p.DepartmentId })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (project == null)
+        {
+            throw new KeyNotFoundException("Проект не найден.");
+        }
+
+        if (session.RoleName == "Руководитель отдела" && session.DepartmentId.HasValue
+            && project.DepartmentId != session.DepartmentId.Value)
+        {
+            throw new UnauthorizedAccessException("Нет прав на просмотр статей этого проекта.");
+        }
+
+        return await _db.ExpenseItems
+            .Where(i => i.Smeta.ProjectId == projectId)
+            .OrderBy(i => i.KosguCode)
+            .ThenBy(i => i.Name)
+            .Select(i => new ExpenseItemDto
+            {
+                Id = i.Id,
+                Name = i.Name,
+                KosguCode = i.KosguCode,
+                PlanAmount = i.PlanAmount,
+                LimitAmount = i.LimitAmount,
+                Quantity = i.Quantity,
+                Price = i.Price,
+                FactAmount = i.ActualExpenses.Sum(a => a.Amount)
+            })
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<SmetaDetailDto> CreateAsync(CreateSmetaRequest request, int userId, CancellationToken cancellationToken)
     {
         if (!await _db.Projects.AnyAsync(p => p.Id == request.ProjectId, cancellationToken))

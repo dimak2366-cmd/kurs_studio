@@ -31,13 +31,7 @@ public partial class CreateRequestDialog : Window
 
         try
         {
-            var smetas = await _api.GetAsync<List<SmetaDto>>($"/api/smeta?projectId={projectId}");
-            var items = new List<ExpenseItemDto>();
-            foreach (var s in smetas)
-            {
-                var detail = await _api.GetAsync<SmetaDetailDto>($"/api/smeta/{s.Id}");
-                items.AddRange(detail.Items);
-            }
+            var items = await _api.GetAsync<List<ExpenseItemDto>>($"/api/smeta/items/by-project/{projectId}");
             ItemCombo.ItemsSource = items;
             if (items.Count > 0) ItemCombo.SelectedIndex = 0;
             StatusText.Text = $"Доступно статей: {items.Count}.";

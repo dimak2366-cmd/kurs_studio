@@ -46,6 +46,24 @@ public class SmetaController : ControllerBase
         catch (UnauthorizedAccessException ex) { return StatusCode(403, new { error = ex.Message }); }
     }
 
+    /// <summary>
+    /// Все статьи расходов всех смет проекта одним запросом.
+    /// Используется в диалоге подачи заявки, чтобы избежать N+1 на клиенте.
+    /// </summary>
+    [HttpGet("items/by-project/{projectId:int}")]
+    [AuthorizeRole]
+    public async Task<IActionResult> GetItemsByProject(int projectId, CancellationToken cancellationToken)
+    {
+        var session = (SessionInfo?)HttpContext.Items["Session"];
+        if (session == null) return Unauthorized();
+        try
+        {
+            return Ok(await _smeta.GetItemsByProjectAsync(projectId, session, cancellationToken));
+        }
+        catch (KeyNotFoundException ex) { return NotFound(new { error = ex.Message }); }
+        catch (UnauthorizedAccessException ex) { return StatusCode(403, new { error = ex.Message }); }
+    }
+
     [HttpPost]
     [AuthorizeRole("Главный экономист")]
     public async Task<IActionResult> Create([FromBody] CreateSmetaRequest request, CancellationToken cancellationToken)
