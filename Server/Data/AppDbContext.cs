@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<Project> Projects => Set<Project>();
     public DbSet<Smeta> Smetas => Set<Smeta>();
     public DbSet<ExpenseItem> ExpenseItems => Set<ExpenseItem>();
+    public DbSet<CatalogExpenseItem> CatalogExpenseItems => Set<CatalogExpenseItem>();
     public DbSet<ActualExpense> ActualExpenses => Set<ActualExpense>();
     public DbSet<Period> Periods => Set<Period>();
     public DbSet<ExpenseRequest> ExpenseRequests => Set<ExpenseRequest>();
@@ -95,6 +96,16 @@ public class AppDbContext : DbContext
             e.Property(x => x.Price).HasPrecision(18, 2);
             e.HasOne(x => x.Smeta).WithMany(s => s.ExpenseItems).HasForeignKey(x => x.SmetaId).OnDelete(DeleteBehavior.Cascade);
             e.HasIndex(x => x.SmetaId);
+        });
+
+        mb.Entity<CatalogExpenseItem>(e =>
+        {
+            e.ToTable("catalog_expense_items");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).IsRequired().HasMaxLength(128);
+            e.Property(x => x.KosguCode).IsRequired().HasMaxLength(16);
+            e.Property(x => x.IsActive).IsRequired().HasDefaultValue(true);
+            e.HasIndex(x => new { x.Name, x.KosguCode }).IsUnique();
         });
 
         mb.Entity<ActualExpense>(e =>

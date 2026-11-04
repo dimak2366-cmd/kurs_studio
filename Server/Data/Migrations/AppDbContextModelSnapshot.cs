@@ -147,6 +147,37 @@ namespace Server.Data.Migrations
                     b.ToTable("audit_logs", (string)null);
                 });
 
+            modelBuilder.Entity("Server.Models.CatalogExpenseItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("KosguCode")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name", "KosguCode")
+                        .IsUnique();
+
+                    b.ToTable("catalog_expense_items", (string)null);
+                });
+
             modelBuilder.Entity("Server.Models.Department", b =>
                 {
                     b.Property<int>("Id")
