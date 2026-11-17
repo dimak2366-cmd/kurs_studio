@@ -1,0 +1,1045 @@
+﻿Структура папок
+Серийный номер тома: 442E-A2ED
+D:.
+│   .gitattributes
+│   .gitignore
+│   BudgetInstitute.sln
+│   tree.txt
+│   _GLOBAL_CONTEXT.md
+│   _instruction.md
+│   Глава_1_Аналитический_обзор_бюджет_НИИ.docx
+│   Планируемый_функционал_бюджет_НИИ.docx
+│   
+├───Backups
+│       budget_institute_20261029_162039.backup
+│       budget_institute_20261029_172144.backup
+│       
+├───Client
+│   │   App.xaml
+│   │   App.xaml.cs
+│   │   appsettings.json
+│   │   AssemblyInfo.cs
+│   │   Client.csproj
+│   │   MainWindow.xaml
+│   │   MainWindow.xaml.cs
+│   │   
+│   ├───bin
+│   │   └───Debug
+│   │       ├───net10.0-windows
+│   │       │       Client.deps.json
+│   │       │       Client.dll
+│   │       │       Client.exe
+│   │       │       Client.pdb
+│   │       │       Client.runtimeconfig.json
+│   │       │       
+│   │       └───net8.0-windows
+│   │               appsettings.json
+│   │               Client.deps.json
+│   │               Client.dll
+│   │               Client.exe
+│   │               Client.pdb
+│   │               Client.runtimeconfig.json
+│   │               Microsoft.Extensions.Configuration.Abstractions.dll
+│   │               Microsoft.Extensions.Configuration.Binder.dll
+│   │               Microsoft.Extensions.Configuration.dll
+│   │               Microsoft.Extensions.Configuration.FileExtensions.dll
+│   │               Microsoft.Extensions.Configuration.Json.dll
+│   │               Microsoft.Extensions.DependencyInjection.Abstractions.dll
+│   │               Microsoft.Extensions.DependencyInjection.dll
+│   │               Microsoft.Extensions.Diagnostics.Abstractions.dll
+│   │               Microsoft.Extensions.Diagnostics.dll
+│   │               Microsoft.Extensions.FileProviders.Abstractions.dll
+│   │               Microsoft.Extensions.FileProviders.Physical.dll
+│   │               Microsoft.Extensions.FileSystemGlobbing.dll
+│   │               Microsoft.Extensions.Http.dll
+│   │               Microsoft.Extensions.Logging.Abstractions.dll
+│   │               Microsoft.Extensions.Logging.dll
+│   │               Microsoft.Extensions.Options.ConfigurationExtensions.dll
+│   │               Microsoft.Extensions.Options.dll
+│   │               Microsoft.Extensions.Primitives.dll
+│   │               Shared.dll
+│   │               Shared.pdb
+│   │               
+│   ├───Converters
+│   │       NullToCollapsedConverter.cs
+│   │       
+│   ├───obj
+│   │   │   Client.csproj.nuget.dgspec.json
+│   │   │   Client.csproj.nuget.g.props
+│   │   │   Client.csproj.nuget.g.targets
+│   │   │   Client_kibiywqo_wpftmp.csproj.nuget.dgspec.json
+│   │   │   Client_kibiywqo_wpftmp.csproj.nuget.g.props
+│   │   │   Client_kibiywqo_wpftmp.csproj.nuget.g.targets
+│   │   │   Client_nkfw0qwt_wpftmp.csproj.nuget.dgspec.json
+│   │   │   Client_nkfw0qwt_wpftmp.csproj.nuget.g.props
+│   │   │   Client_nkfw0qwt_wpftmp.csproj.nuget.g.targets
+│   │   │   project.assets.json
+│   │   │   project.nuget.cache
+│   │   │   
+│   │   └───Debug
+│   │       ├───net10.0-windows
+│   │       │   │   .NETCoreApp,Version=v10.0.AssemblyAttributes.cs
+│   │       │   │   App.g.cs
+│   │       │   │   apphost.exe
+│   │       │   │   Client.AssemblyInfo.cs
+│   │       │   │   Client.AssemblyInfoInputs.cache
+│   │       │   │   Client.assets.cache
+│   │       │   │   Client.csproj.CoreCompileInputs.cache
+│   │       │   │   Client.csproj.FileListAbsolute.txt
+│   │       │   │   Client.dll
+│   │       │   │   Client.g.resources
+│   │       │   │   Client.GeneratedMSBuildEditorConfig.editorconfig
+│   │       │   │   Client.genruntimeconfig.cache
+│   │       │   │   Client.GlobalUsings.g.cs
+│   │       │   │   Client.pdb
+│   │       │   │   Client_1evrwe53_wpftmp.AssemblyInfo.cs
+│   │       │   │   Client_1evrwe53_wpftmp.AssemblyInfoInputs.cache
+│   │       │   │   Client_1evrwe53_wpftmp.assets.cache
+│   │       │   │   Client_1evrwe53_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │       │   │   Client_1evrwe53_wpftmp.GlobalUsings.g.cs
+│   │       │   │   Client_MarkupCompile.cache
+│   │       │   │   Client_MarkupCompile.lref
+│   │       │   │   MainWindow.baml
+│   │       │   │   MainWindow.g.cs
+│   │       │   │   
+│   │       │   ├───ref
+│   │       │   │       Client.dll
+│   │       │   │       
+│   │       │   └───refint
+│   │       │           Client.dll
+│   │       │           
+│   │       └───net8.0-windows
+│   │           │   .NETCoreApp,Version=v8.0.AssemblyAttributes.cs
+│   │           │   App.baml
+│   │           │   App.g.cs
+│   │           │   App.g.i.cs
+│   │           │   apphost.exe
+│   │           │   Client.AssemblyInfo.cs
+│   │           │   Client.AssemblyInfoInputs.cache
+│   │           │   Client.assets.cache
+│   │           │   Client.csproj.AssemblyReference.cache
+│   │           │   Client.csproj.BuildWithSkipAnalyzers
+│   │           │   Client.csproj.CoreCompileInputs.cache
+│   │           │   Client.csproj.FileListAbsolute.txt
+│   │           │   Client.csproj.Up2Date
+│   │           │   Client.dll
+│   │           │   Client.g.resources
+│   │           │   Client.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client.genruntimeconfig.cache
+│   │           │   Client.GlobalUsings.g.cs
+│   │           │   Client.pdb
+│   │           │   Client_1ipmtual_wpftmp.AssemblyInfo.cs
+│   │           │   Client_1ipmtual_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_1ipmtual_wpftmp.assets.cache
+│   │           │   Client_1ipmtual_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_1ipmtual_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_42jewkns_wpftmp.AssemblyInfo.cs
+│   │           │   Client_42jewkns_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_42jewkns_wpftmp.assets.cache
+│   │           │   Client_42jewkns_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_42jewkns_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_5cdr3io3_wpftmp.AssemblyInfo.cs
+│   │           │   Client_5cdr3io3_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_5cdr3io3_wpftmp.assets.cache
+│   │           │   Client_5cdr3io3_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_5cdr3io3_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_awslfi2a_wpftmp.AssemblyInfo.cs
+│   │           │   Client_awslfi2a_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_awslfi2a_wpftmp.assets.cache
+│   │           │   Client_awslfi2a_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_awslfi2a_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_bzsmho10_wpftmp.AssemblyInfo.cs
+│   │           │   Client_bzsmho10_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_bzsmho10_wpftmp.assets.cache
+│   │           │   Client_bzsmho10_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_bzsmho10_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_Content.g.cs
+│   │           │   Client_Content.g.i.cs
+│   │           │   Client_fo15rlkl_wpftmp.AssemblyInfo.cs
+│   │           │   Client_fo15rlkl_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_fo15rlkl_wpftmp.assets.cache
+│   │           │   Client_fo15rlkl_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_fo15rlkl_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_ifxsxbyr_wpftmp.AssemblyInfo.cs
+│   │           │   Client_ifxsxbyr_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_ifxsxbyr_wpftmp.assets.cache
+│   │           │   Client_ifxsxbyr_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_ifxsxbyr_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_ipjfcota_wpftmp.AssemblyInfo.cs
+│   │           │   Client_ipjfcota_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_ipjfcota_wpftmp.assets.cache
+│   │           │   Client_ipjfcota_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_ipjfcota_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_jv4e5qbp_wpftmp.AssemblyInfo.cs
+│   │           │   Client_jv4e5qbp_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_jv4e5qbp_wpftmp.assets.cache
+│   │           │   Client_jv4e5qbp_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_jv4e5qbp_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_kibiywqo_wpftmp.AssemblyInfo.cs
+│   │           │   Client_kibiywqo_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_kibiywqo_wpftmp.assets.cache
+│   │           │   Client_kibiywqo_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_kibiywqo_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_kx5dtci2_wpftmp.AssemblyInfo.cs
+│   │           │   Client_kx5dtci2_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_kx5dtci2_wpftmp.assets.cache
+│   │           │   Client_kx5dtci2_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_kx5dtci2_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_ljmurqvg_wpftmp.AssemblyInfo.cs
+│   │           │   Client_ljmurqvg_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_ljmurqvg_wpftmp.assets.cache
+│   │           │   Client_ljmurqvg_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_ljmurqvg_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_MarkupCompile.cache
+│   │           │   Client_MarkupCompile.lref
+│   │           │   Client_nkfw0qwt_wpftmp.AssemblyInfo.cs
+│   │           │   Client_nkfw0qwt_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_nkfw0qwt_wpftmp.assets.cache
+│   │           │   Client_nkfw0qwt_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_nkfw0qwt_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_oueydf1u_wpftmp.AssemblyInfo.cs
+│   │           │   Client_oueydf1u_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_oueydf1u_wpftmp.assets.cache
+│   │           │   Client_oueydf1u_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_oueydf1u_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_paeo2e12_wpftmp.AssemblyInfo.cs
+│   │           │   Client_paeo2e12_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_paeo2e12_wpftmp.assets.cache
+│   │           │   Client_paeo2e12_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_paeo2e12_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_r43psqgl_wpftmp.AssemblyInfo.cs
+│   │           │   Client_r43psqgl_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_r43psqgl_wpftmp.assets.cache
+│   │           │   Client_r43psqgl_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_r43psqgl_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_rlka1vpi_wpftmp.AssemblyInfo.cs
+│   │           │   Client_rlka1vpi_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_rlka1vpi_wpftmp.assets.cache
+│   │           │   Client_rlka1vpi_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_rlka1vpi_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_w1dt2tkt_wpftmp.AssemblyInfo.cs
+│   │           │   Client_w1dt2tkt_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_w1dt2tkt_wpftmp.assets.cache
+│   │           │   Client_w1dt2tkt_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_w1dt2tkt_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_wxrdhqhg_wpftmp.AssemblyInfo.cs
+│   │           │   Client_wxrdhqhg_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_wxrdhqhg_wpftmp.assets.cache
+│   │           │   Client_wxrdhqhg_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_wxrdhqhg_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_x5fnnees_wpftmp.AssemblyInfo.cs
+│   │           │   Client_x5fnnees_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_x5fnnees_wpftmp.assets.cache
+│   │           │   Client_x5fnnees_wpftmp.csproj.BuildWithSkipAnalyzers
+│   │           │   Client_x5fnnees_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_x5fnnees_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_ybplj2ma_wpftmp.AssemblyInfo.cs
+│   │           │   Client_ybplj2ma_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_ybplj2ma_wpftmp.assets.cache
+│   │           │   Client_ybplj2ma_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_ybplj2ma_wpftmp.GlobalUsings.g.cs
+│   │           │   Client_zwj0uhha_wpftmp.AssemblyInfo.cs
+│   │           │   Client_zwj0uhha_wpftmp.AssemblyInfoInputs.cache
+│   │           │   Client_zwj0uhha_wpftmp.assets.cache
+│   │           │   Client_zwj0uhha_wpftmp.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Client_zwj0uhha_wpftmp.GlobalUsings.g.cs
+│   │           │   GeneratedInternalTypeHelper.g.cs
+│   │           │   GeneratedInternalTypeHelper.g.i.cs
+│   │           │   MainWindow.baml
+│   │           │   MainWindow.g.cs
+│   │           │   MainWindow.g.i.cs
+│   │           │   
+│   │           ├───ref
+│   │           │       Client.dll
+│   │           │       
+│   │           ├───refint
+│   │           │       Client.dll
+│   │           │       
+│   │           └───Views
+│   │               │   MainShell.baml
+│   │               │   MainShell.g.cs
+│   │               │   MainShell.g.i.cs
+│   │               │   PlaceholderView.baml
+│   │               │   PlaceholderView.g.cs
+│   │               │   PlaceholderView.g.i.cs
+│   │               │   
+│   │               ├───Accountant
+│   │               │       ActualExpenseEditDialog.baml
+│   │               │       ActualExpenseEditDialog.g.cs
+│   │               │       ExpensesView.baml
+│   │               │       ExpensesView.g.cs
+│   │               │       PeriodsView.baml
+│   │               │       PeriodsView.g.cs
+│   │               │       
+│   │               ├───Admin
+│   │               │       BackupView.baml
+│   │               │       BackupView.g.cs
+│   │               │       CatalogItemEditDialog.baml
+│   │               │       CatalogItemEditDialog.g.cs
+│   │               │       CatalogView.baml
+│   │               │       CatalogView.g.cs
+│   │               │       DepartmentEditDialog.baml
+│   │               │       DepartmentEditDialog.g.cs
+│   │               │       DepartmentsView.baml
+│   │               │       DepartmentsView.g.cs
+│   │               │       LogsView.baml
+│   │               │       LogsView.g.cs
+│   │               │       ProjectEditDialog.baml
+│   │               │       ProjectEditDialog.g.cs
+│   │               │       ProjectsView.baml
+│   │               │       ProjectsView.g.cs
+│   │               │       SettingsView.baml
+│   │               │       SettingsView.g.cs
+│   │               │       UserEditDialog.baml
+│   │               │       UserEditDialog.g.cs
+│   │               │       UsersView.baml
+│   │               │       UsersView.g.cs
+│   │               │       
+│   │               ├───Director
+│   │               │       DecisionsView.baml
+│   │               │       DecisionsView.g.cs
+│   │               │       OverviewView.baml
+│   │               │       OverviewView.g.cs
+│   │               │       ReportsApprovalView.baml
+│   │               │       ReportsApprovalView.g.cs
+│   │               │       SmetaApprovalView.baml
+│   │               │       SmetaApprovalView.g.cs
+│   │               │       
+│   │               ├───Economist
+│   │               │       AnalysisView.baml
+│   │               │       AnalysisView.g.cs
+│   │               │       LimitsView.baml
+│   │               │       LimitsView.g.cs
+│   │               │       RejectReasonDialog.baml
+│   │               │       RejectReasonDialog.g.cs
+│   │               │       ReportsView.baml
+│   │               │       ReportsView.g.cs
+│   │               │       RequestsReviewView.baml
+│   │               │       RequestsReviewView.g.cs
+│   │               │       SmetaCreateDialog.baml
+│   │               │       SmetaCreateDialog.g.cs
+│   │               │       SmetaEditDialog.baml
+│   │               │       SmetaEditDialog.g.cs
+│   │               │       SmetasView.baml
+│   │               │       SmetasView.g.cs
+│   │               │       
+│   │               └───Head
+│   │                       CreateRequestDialog.baml
+│   │                       CreateRequestDialog.g.cs
+│   │                       HeadExpensesView.baml
+│   │                       HeadExpensesView.g.cs
+│   │                       HeadReportsView.baml
+│   │                       HeadReportsView.g.cs
+│   │                       HeadRequestsView.baml
+│   │                       HeadRequestsView.g.cs
+│   │                       HeadSmetasView.baml
+│   │                       HeadSmetasView.g.cs
+│   │                       
+│   ├───Services
+│   │       ApiClient.cs
+│   │       SessionService.cs
+│   │       
+│   ├───ViewModels
+│   │       AsyncRelayCommand.cs
+│   │       LoginViewModel.cs
+│   │       RelayCommand.cs
+│   │       ViewModelBase.cs
+│   │       
+│   └───Views
+│       │   MainShell.xaml
+│       │   MainShell.xaml.cs
+│       │   MainShellViewModel.cs
+│       │   PlaceholderView.xaml
+│       │   PlaceholderView.xaml.cs
+│       │   PlaceholderViewModel.cs
+│       │   
+│       ├───Accountant
+│       │       ActualExpenseEditDialog.xaml
+│       │       ActualExpenseEditDialog.xaml.cs
+│       │       ExpensesView.xaml
+│       │       ExpensesView.xaml.cs
+│       │       ExpensesViewModel.cs
+│       │       PeriodsView.xaml
+│       │       PeriodsView.xaml.cs
+│       │       PeriodsViewModel.cs
+│       │       
+│       ├───Admin
+│       │       BackupView.xaml
+│       │       BackupView.xaml.cs
+│       │       BackupViewModel.cs
+│       │       CatalogItemEditDialog.xaml
+│       │       CatalogItemEditDialog.xaml.cs
+│       │       CatalogView.xaml
+│       │       CatalogView.xaml.cs
+│       │       CatalogViewModel.cs
+│       │       DepartmentEditDialog.xaml
+│       │       DepartmentEditDialog.xaml.cs
+│       │       DepartmentsView.xaml
+│       │       DepartmentsView.xaml.cs
+│       │       DepartmentsViewModel.cs
+│       │       LogsView.xaml
+│       │       LogsView.xaml.cs
+│       │       LogsViewModel.cs
+│       │       ProjectEditDialog.xaml
+│       │       ProjectEditDialog.xaml.cs
+│       │       ProjectsView.xaml
+│       │       ProjectsView.xaml.cs
+│       │       ProjectsViewModel.cs
+│       │       SettingsView.xaml
+│       │       SettingsView.xaml.cs
+│       │       SettingsViewModel.cs
+│       │       UserEditDialog.xaml
+│       │       UserEditDialog.xaml.cs
+│       │       UsersView.xaml
+│       │       UsersView.xaml.cs
+│       │       UsersViewModel.cs
+│       │       
+│       ├───Director
+│       │       DecisionsView.xaml
+│       │       DecisionsView.xaml.cs
+│       │       DecisionsViewModel.cs
+│       │       OverviewView.xaml
+│       │       OverviewView.xaml.cs
+│       │       OverviewViewModel.cs
+│       │       ReportsApprovalView.xaml
+│       │       ReportsApprovalView.xaml.cs
+│       │       ReportsApprovalViewModel.cs
+│       │       SmetaApprovalView.xaml
+│       │       SmetaApprovalView.xaml.cs
+│       │       SmetaApprovalViewModel.cs
+│       │       
+│       ├───Economist
+│       │       AnalysisView.xaml
+│       │       AnalysisView.xaml.cs
+│       │       AnalysisViewModel.cs
+│       │       LimitsView.xaml
+│       │       LimitsView.xaml.cs
+│       │       LimitsViewModel.cs
+│       │       RejectReasonDialog.xaml
+│       │       RejectReasonDialog.xaml.cs
+│       │       ReportsView.xaml
+│       │       ReportsView.xaml.cs
+│       │       ReportsViewModel.cs
+│       │       RequestsReviewView.xaml
+│       │       RequestsReviewView.xaml.cs
+│       │       RequestsReviewViewModel.cs
+│       │       SmetaCreateDialog.xaml
+│       │       SmetaCreateDialog.xaml.cs
+│       │       SmetaEditDialog.xaml
+│       │       SmetaEditDialog.xaml.cs
+│       │       SmetasView.xaml
+│       │       SmetasView.xaml.cs
+│       │       SmetasViewModel.cs
+│       │       
+│       └───Head
+│               CreateRequestDialog.xaml
+│               CreateRequestDialog.xaml.cs
+│               HeadExpensesView.xaml
+│               HeadExpensesView.xaml.cs
+│               HeadExpensesViewModel.cs
+│               HeadReportsView.xaml
+│               HeadReportsView.xaml.cs
+│               HeadReportsViewModel.cs
+│               HeadRequestsView.xaml
+│               HeadRequestsView.xaml.cs
+│               HeadRequestsViewModel.cs
+│               HeadSmetasView.xaml
+│               HeadSmetasView.xaml.cs
+│               HeadSmetasViewModel.cs
+│               
+├───Docs
+│   │   roadmap.md
+│   │   roadmap_code.md
+│   │   wpfpilot_check_instructions.md
+│   │   wpfpilot_run_report.md
+│   │   Глава_2_Проектирование.md
+│   │   Глава_3_Тестирование.md
+│   │   
+│   ├───defects
+│   │       full_issue_list.md
+│   │       
+│   └───Diagrams
+│           01_UseCase.puml
+│           02_Classes.puml
+│           03_ER.puml
+│           04_Sequence_Login.puml
+│           05_Sequence_SmetaCreate.puml
+│           06_State_Smeta.puml
+│           07_Deployment.puml
+│           
+├───Server
+│   │   appsettings.Development.json
+│   │   appsettings.json
+│   │   Program.cs
+│   │   Server.csproj
+│   │   Server.http
+│   │   
+│   ├───bin
+│   │   └───Debug
+│   │       ├───net10.0
+│   │       │       appsettings.Development.json
+│   │       │       appsettings.json
+│   │       │       Microsoft.AspNetCore.OpenApi.dll
+│   │       │       Microsoft.OpenApi.dll
+│   │       │       Server.deps.json
+│   │       │       Server.dll
+│   │       │       Server.exe
+│   │       │       Server.pdb
+│   │       │       Server.runtimeconfig.json
+│   │       │       Server.staticwebassets.endpoints.json
+│   │       │       
+│   │       └───net8.0
+│   │           │   appsettings.Development.json
+│   │           │   appsettings.json
+│   │           │   Humanizer.dll
+│   │           │   Microsoft.Bcl.AsyncInterfaces.dll
+│   │           │   Microsoft.CodeAnalysis.CSharp.dll
+│   │           │   Microsoft.CodeAnalysis.CSharp.Workspaces.dll
+│   │           │   Microsoft.CodeAnalysis.dll
+│   │           │   Microsoft.CodeAnalysis.Workspaces.dll
+│   │           │   Microsoft.EntityFrameworkCore.Abstractions.dll
+│   │           │   Microsoft.EntityFrameworkCore.Design.dll
+│   │           │   Microsoft.EntityFrameworkCore.dll
+│   │           │   Microsoft.EntityFrameworkCore.Relational.dll
+│   │           │   Microsoft.Extensions.Caching.Memory.dll
+│   │           │   Microsoft.Extensions.DependencyInjection.Abstractions.dll
+│   │           │   Microsoft.Extensions.DependencyInjection.dll
+│   │           │   Microsoft.Extensions.DependencyModel.dll
+│   │           │   Microsoft.Extensions.Logging.Abstractions.dll
+│   │           │   Microsoft.Extensions.Logging.dll
+│   │           │   Microsoft.Extensions.Options.dll
+│   │           │   Microsoft.OpenApi.dll
+│   │           │   Mono.TextTemplating.dll
+│   │           │   Npgsql.dll
+│   │           │   Npgsql.EntityFrameworkCore.PostgreSQL.dll
+│   │           │   Serilog.AspNetCore.dll
+│   │           │   Serilog.dll
+│   │           │   Serilog.Extensions.Hosting.dll
+│   │           │   Serilog.Extensions.Logging.dll
+│   │           │   Serilog.Formatting.Compact.dll
+│   │           │   Serilog.Settings.Configuration.dll
+│   │           │   Serilog.Sinks.Console.dll
+│   │           │   Serilog.Sinks.Debug.dll
+│   │           │   Serilog.Sinks.File.dll
+│   │           │   Server.deps.json
+│   │           │   Server.dll
+│   │           │   Server.exe
+│   │           │   Server.pdb
+│   │           │   Server.runtimeconfig.json
+│   │           │   Server.staticwebassets.endpoints.json
+│   │           │   Shared.dll
+│   │           │   Shared.pdb
+│   │           │   Swashbuckle.AspNetCore.Swagger.dll
+│   │           │   Swashbuckle.AspNetCore.SwaggerGen.dll
+│   │           │   Swashbuckle.AspNetCore.SwaggerUI.dll
+│   │           │   System.CodeDom.dll
+│   │           │   System.Composition.AttributedModel.dll
+│   │           │   System.Composition.Convention.dll
+│   │           │   System.Composition.Hosting.dll
+│   │           │   System.Composition.Runtime.dll
+│   │           │   System.Composition.TypedParts.dll
+│   │           │   
+│   │           ├───cs
+│   │           │       Microsoft.CodeAnalysis.CSharp.resources.dll
+│   │           │       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+│   │           │       Microsoft.CodeAnalysis.resources.dll
+│   │           │       Microsoft.CodeAnalysis.Workspaces.resources.dll
+│   │           │       
+│   │           ├───de
+│   │           │       Microsoft.CodeAnalysis.CSharp.resources.dll
+│   │           │       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+│   │           │       Microsoft.CodeAnalysis.resources.dll
+│   │           │       Microsoft.CodeAnalysis.Workspaces.resources.dll
+│   │           │       
+│   │           ├───es
+│   │           │       Microsoft.CodeAnalysis.CSharp.resources.dll
+│   │           │       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+│   │           │       Microsoft.CodeAnalysis.resources.dll
+│   │           │       Microsoft.CodeAnalysis.Workspaces.resources.dll
+│   │           │       
+│   │           ├───fr
+│   │           │       Microsoft.CodeAnalysis.CSharp.resources.dll
+│   │           │       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+│   │           │       Microsoft.CodeAnalysis.resources.dll
+│   │           │       Microsoft.CodeAnalysis.Workspaces.resources.dll
+│   │           │       
+│   │           ├───it
+│   │           │       Microsoft.CodeAnalysis.CSharp.resources.dll
+│   │           │       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+│   │           │       Microsoft.CodeAnalysis.resources.dll
+│   │           │       Microsoft.CodeAnalysis.Workspaces.resources.dll
+│   │           │       
+│   │           ├───ja
+│   │           │       Microsoft.CodeAnalysis.CSharp.resources.dll
+│   │           │       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+│   │           │       Microsoft.CodeAnalysis.resources.dll
+│   │           │       Microsoft.CodeAnalysis.Workspaces.resources.dll
+│   │           │       
+│   │           ├───ko
+│   │           │       Microsoft.CodeAnalysis.CSharp.resources.dll
+│   │           │       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+│   │           │       Microsoft.CodeAnalysis.resources.dll
+│   │           │       Microsoft.CodeAnalysis.Workspaces.resources.dll
+│   │           │       
+│   │           ├───pl
+│   │           │       Microsoft.CodeAnalysis.CSharp.resources.dll
+│   │           │       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+│   │           │       Microsoft.CodeAnalysis.resources.dll
+│   │           │       Microsoft.CodeAnalysis.Workspaces.resources.dll
+│   │           │       
+│   │           ├───pt-BR
+│   │           │       Microsoft.CodeAnalysis.CSharp.resources.dll
+│   │           │       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+│   │           │       Microsoft.CodeAnalysis.resources.dll
+│   │           │       Microsoft.CodeAnalysis.Workspaces.resources.dll
+│   │           │       
+│   │           ├───ru
+│   │           │       Microsoft.CodeAnalysis.CSharp.resources.dll
+│   │           │       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+│   │           │       Microsoft.CodeAnalysis.resources.dll
+│   │           │       Microsoft.CodeAnalysis.Workspaces.resources.dll
+│   │           │       
+│   │           ├───tr
+│   │           │       Microsoft.CodeAnalysis.CSharp.resources.dll
+│   │           │       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+│   │           │       Microsoft.CodeAnalysis.resources.dll
+│   │           │       Microsoft.CodeAnalysis.Workspaces.resources.dll
+│   │           │       
+│   │           ├───zh-Hans
+│   │           │       Microsoft.CodeAnalysis.CSharp.resources.dll
+│   │           │       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+│   │           │       Microsoft.CodeAnalysis.resources.dll
+│   │           │       Microsoft.CodeAnalysis.Workspaces.resources.dll
+│   │           │       
+│   │           └───zh-Hant
+│   │                   Microsoft.CodeAnalysis.CSharp.resources.dll
+│   │                   Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+│   │                   Microsoft.CodeAnalysis.resources.dll
+│   │                   Microsoft.CodeAnalysis.Workspaces.resources.dll
+│   │                   
+│   ├───Commands
+│   │       CommandDispatcher.cs
+│   │       ICommand.cs
+│   │       
+│   ├───Controllers
+│   │       ActualExpensesController.cs
+│   │       AnalysisController.cs
+│   │       AuthController.cs
+│   │       BackupController.cs
+│   │       DecisionsController.cs
+│   │       DepartmentsController.cs
+│   │       ExpenseItemsCatalogController.cs
+│   │       LimitsController.cs
+│   │       LogsController.cs
+│   │       PeriodsController.cs
+│   │       ProjectsController.cs
+│   │       ReportsController.cs
+│   │       RequestsController.cs
+│   │       SettingsController.cs
+│   │       SmetaController.cs
+│   │       UsersController.cs
+│   │       
+│   ├───Data
+│   │   │   AppDbContext.cs
+│   │   │   DbSeeder.cs
+│   │   │   IRepository.cs
+│   │   │   Repository.cs
+│   │   │   
+│   │   └───Migrations
+│   │           20261029153743_InitialCreate.cs
+│   │           20261029153743_InitialCreate.Designer.cs
+│   │           20261029162239_AddParentSmetaIdToSmeta.cs
+│   │           20261029162239_AddParentSmetaIdToSmeta.Designer.cs
+│   │           20261104185755_AddCatalogExpenseItem.cs
+│   │           20261104185755_AddCatalogExpenseItem.Designer.cs
+│   │           AppDbContextModelSnapshot.cs
+│   │           
+│   ├───Infrastructure
+│   │       AppConfig.cs
+│   │       ExceptionMiddleware.cs
+│   │       
+│   ├───logs
+│   │       server-20261104.log
+│   │       server-20261105.log
+│   │       
+│   ├───Models
+│   │       ActualExpense.cs
+│   │       AnalyticReport.cs
+│   │       AuditLog.cs
+│   │       CatalogExpenseItem.cs
+│   │       Department.cs
+│   │       ErrorLog.cs
+│   │       ExpenseItem.cs
+│   │       ExpenseRequest.cs
+│   │       ManagementDecision.cs
+│   │       Period.cs
+│   │       Project.cs
+│   │       Role.cs
+│   │       Smeta.cs
+│   │       User.cs
+│   │       
+│   ├───obj
+│   │   │   project.assets.json
+│   │   │   project.nuget.cache
+│   │   │   Server.csproj.EntityFrameworkCore.targets
+│   │   │   Server.csproj.nuget.dgspec.json
+│   │   │   Server.csproj.nuget.g.props
+│   │   │   Server.csproj.nuget.g.targets
+│   │   │   
+│   │   └───Debug
+│   │       ├───net10.0
+│   │       │   │   .NETCoreApp,Version=v10.0.AssemblyAttributes.cs
+│   │       │   │   apphost.exe
+│   │       │   │   rjsmcshtml.dswa.cache.json
+│   │       │   │   rjsmrazor.dswa.cache.json
+│   │       │   │   rpswa.dswa.cache.json
+│   │       │   │   Server.AssemblyInfo.cs
+│   │       │   │   Server.AssemblyInfoInputs.cache
+│   │       │   │   Server.assets.cache
+│   │       │   │   Server.csproj.AssemblyReference.cache
+│   │       │   │   Server.csproj.CoreCompileInputs.cache
+│   │       │   │   Server.csproj.FileListAbsolute.txt
+│   │       │   │   Server.csproj.Up2Date
+│   │       │   │   Server.dll
+│   │       │   │   Server.GeneratedMSBuildEditorConfig.editorconfig
+│   │       │   │   Server.genruntimeconfig.cache
+│   │       │   │   Server.GlobalUsings.g.cs
+│   │       │   │   Server.MvcApplicationPartsAssemblyInfo.cache
+│   │       │   │   Server.MvcApplicationPartsAssemblyInfo.cs
+│   │       │   │   Server.pdb
+│   │       │   │   staticwebassets.build.endpoints.json
+│   │       │   │   staticwebassets.build.json
+│   │       │   │   staticwebassets.build.json.cache
+│   │       │   │   swae.build.ex.cache
+│   │       │   │   
+│   │       │   ├───ref
+│   │       │   │       Server.dll
+│   │       │   │       
+│   │       │   ├───refint
+│   │       │   │       Server.dll
+│   │       │   │       
+│   │       │   └───staticwebassets
+│   │       └───net8.0
+│   │           │   .NETCoreApp,Version=v8.0.AssemblyAttributes.cs
+│   │           │   apphost.exe
+│   │           │   rjsmcshtml.dswa.cache.json
+│   │           │   rjsmrazor.dswa.cache.json
+│   │           │   rpswa.dswa.cache.json
+│   │           │   Server.AssemblyInfo.cs
+│   │           │   Server.AssemblyInfoInputs.cache
+│   │           │   Server.assets.cache
+│   │           │   Server.csproj.AssemblyReference.cache
+│   │           │   Server.csproj.CoreCompileInputs.cache
+│   │           │   Server.csproj.FileListAbsolute.txt
+│   │           │   Server.csproj.Up2Date
+│   │           │   Server.dll
+│   │           │   Server.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   Server.genruntimeconfig.cache
+│   │           │   Server.GlobalUsings.g.cs
+│   │           │   Server.MvcApplicationPartsAssemblyInfo.cache
+│   │           │   Server.MvcApplicationPartsAssemblyInfo.cs
+│   │           │   Server.pdb
+│   │           │   staticwebassets.build.endpoints.json
+│   │           │   staticwebassets.build.json
+│   │           │   staticwebassets.build.json.cache
+│   │           │   staticwebassets.references.upToDateCheck.txt
+│   │           │   staticwebassets.removed.txt
+│   │           │   swae.build.ex.cache
+│   │           │   
+│   │           ├───ref
+│   │           │       Server.dll
+│   │           │       
+│   │           ├───refint
+│   │           │       Server.dll
+│   │           │       
+│   │           └───staticwebassets
+│   ├───Properties
+│   │       launchSettings.json
+│   │       
+│   ├───Security
+│   │       AesEncryptor.cs
+│   │       AuthorizeRoleAttribute.cs
+│   │       PasswordHasher.cs
+│   │       
+│   └───Services
+│           AnalysisService.cs
+│           AuditService.cs
+│           AuthService.cs
+│           BackupService.cs
+│           DecisionService.cs
+│           ExpenseService.cs
+│           LimitService.cs
+│           PeriodService.cs
+│           ReportService.cs
+│           RequestService.cs
+│           SettingsService.cs
+│           SmetaService.cs
+│           TokenService.cs
+│           
+├───Shared
+│   │   ProjectInfo.cs
+│   │   Shared.csproj
+│   │   
+│   ├───bin
+│   │   └───Debug
+│   │       ├───net10.0
+│   │       │       Shared.deps.json
+│   │       │       Shared.dll
+│   │       │       Shared.pdb
+│   │       │       
+│   │       └───net8.0
+│   │               Shared.deps.json
+│   │               Shared.dll
+│   │               Shared.pdb
+│   │               
+│   ├───Dtos
+│   │       AnalysisDtos.cs
+│   │       AuthDtos.cs
+│   │       BackupDtos.cs
+│   │       CatalogDtos.cs
+│   │       DecisionDtos.cs
+│   │       DepartmentDtos.cs
+│   │       ExpenseDtos.cs
+│   │       LimitDtos.cs
+│   │       LogDtos.cs
+│   │       PeriodDtos.cs
+│   │       ProjectDtos.cs
+│   │       ReportDtos.cs
+│   │       RequestDtos.cs
+│   │       SettingsDtos.cs
+│   │       SmetaDtos.cs
+│   │       UserDtos.cs
+│   │       
+│   └───obj
+│       │   project.assets.json
+│       │   project.nuget.cache
+│       │   Shared.csproj.nuget.dgspec.json
+│       │   Shared.csproj.nuget.g.props
+│       │   Shared.csproj.nuget.g.targets
+│       │   
+│       └───Debug
+│           ├───net10.0
+│           │   │   .NETCoreApp,Version=v10.0.AssemblyAttributes.cs
+│           │   │   Shared.AssemblyInfo.cs
+│           │   │   Shared.AssemblyInfoInputs.cache
+│           │   │   Shared.assets.cache
+│           │   │   Shared.csproj.CoreCompileInputs.cache
+│           │   │   Shared.csproj.FileListAbsolute.txt
+│           │   │   Shared.dll
+│           │   │   Shared.GeneratedMSBuildEditorConfig.editorconfig
+│           │   │   Shared.GlobalUsings.g.cs
+│           │   │   Shared.pdb
+│           │   │   
+│           │   ├───ref
+│           │   │       Shared.dll
+│           │   │       
+│           │   └───refint
+│           │           Shared.dll
+│           │           
+│           └───net8.0
+│               │   .NETCoreApp,Version=v8.0.AssemblyAttributes.cs
+│               │   Shared.AssemblyInfo.cs
+│               │   Shared.AssemblyInfoInputs.cache
+│               │   Shared.assets.cache
+│               │   Shared.csproj.BuildWithSkipAnalyzers
+│               │   Shared.csproj.CoreCompileInputs.cache
+│               │   Shared.csproj.FileListAbsolute.txt
+│               │   Shared.dll
+│               │   Shared.GeneratedMSBuildEditorConfig.editorconfig
+│               │   Shared.GlobalUsings.g.cs
+│               │   Shared.pdb
+│               │   
+│               ├───ref
+│               │       Shared.dll
+│               │       
+│               └───refint
+│                       Shared.dll
+│                       
+└───Tests
+    │   AnalysisServiceTests.cs
+    │   credentials.json
+    │   Tests.csproj
+    │   
+    ├───bin
+    │   └───Debug
+    │       └───net8.0
+    │           │   appsettings.Development.json
+    │           │   appsettings.json
+    │           │   CoverletSourceRootsMapping_Tests
+    │           │   Microsoft.EntityFrameworkCore.Abstractions.dll
+    │           │   Microsoft.EntityFrameworkCore.dll
+    │           │   Microsoft.EntityFrameworkCore.Relational.dll
+    │           │   Microsoft.Extensions.Caching.Memory.dll
+    │           │   Microsoft.Extensions.DependencyInjection.Abstractions.dll
+    │           │   Microsoft.Extensions.DependencyInjection.dll
+    │           │   Microsoft.Extensions.DependencyModel.dll
+    │           │   Microsoft.Extensions.Logging.Abstractions.dll
+    │           │   Microsoft.Extensions.Logging.dll
+    │           │   Microsoft.Extensions.Options.dll
+    │           │   Microsoft.OpenApi.dll
+    │           │   Microsoft.TestPlatform.CommunicationUtilities.dll
+    │           │   Microsoft.TestPlatform.CoreUtilities.dll
+    │           │   Microsoft.TestPlatform.CrossPlatEngine.dll
+    │           │   Microsoft.TestPlatform.PlatformAbstractions.dll
+    │           │   Microsoft.TestPlatform.Utilities.dll
+    │           │   Microsoft.VisualStudio.CodeCoverage.Shim.dll
+    │           │   Microsoft.VisualStudio.TestPlatform.Common.dll
+    │           │   Microsoft.VisualStudio.TestPlatform.ObjectModel.dll
+    │           │   Newtonsoft.Json.dll
+    │           │   Npgsql.dll
+    │           │   Npgsql.EntityFrameworkCore.PostgreSQL.dll
+    │           │   NuGet.Frameworks.dll
+    │           │   Serilog.AspNetCore.dll
+    │           │   Serilog.dll
+    │           │   Serilog.Extensions.Hosting.dll
+    │           │   Serilog.Extensions.Logging.dll
+    │           │   Serilog.Formatting.Compact.dll
+    │           │   Serilog.Settings.Configuration.dll
+    │           │   Serilog.Sinks.Console.dll
+    │           │   Serilog.Sinks.Debug.dll
+    │           │   Serilog.Sinks.File.dll
+    │           │   Server.deps.json
+    │           │   Server.dll
+    │           │   Server.exe
+    │           │   Server.pdb
+    │           │   Server.runtimeconfig.json
+    │           │   Server.staticwebassets.endpoints.json
+    │           │   Shared.dll
+    │           │   Shared.pdb
+    │           │   Swashbuckle.AspNetCore.Swagger.dll
+    │           │   Swashbuckle.AspNetCore.SwaggerGen.dll
+    │           │   Swashbuckle.AspNetCore.SwaggerUI.dll
+    │           │   testhost.dll
+    │           │   testhost.exe
+    │           │   Tests.deps.json
+    │           │   Tests.dll
+    │           │   Tests.pdb
+    │           │   Tests.runtimeconfig.json
+    │           │   xunit.abstractions.dll
+    │           │   xunit.assert.dll
+    │           │   xunit.core.dll
+    │           │   xunit.execution.dotnet.dll
+    │           │   xunit.runner.reporters.netcoreapp10.dll
+    │           │   xunit.runner.utility.netcoreapp10.dll
+    │           │   xunit.runner.visualstudio.dotnetcore.testadapter.dll
+    │           │   
+    │           ├───cs
+    │           │       Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CoreUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+    │           │       
+    │           ├───de
+    │           │       Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CoreUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+    │           │       
+    │           ├───es
+    │           │       Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CoreUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+    │           │       
+    │           ├───fr
+    │           │       Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CoreUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+    │           │       
+    │           ├───it
+    │           │       Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CoreUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+    │           │       
+    │           ├───ja
+    │           │       Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CoreUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+    │           │       
+    │           ├───ko
+    │           │       Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CoreUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+    │           │       
+    │           ├───pl
+    │           │       Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CoreUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+    │           │       
+    │           ├───pt-BR
+    │           │       Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CoreUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+    │           │       
+    │           ├───ru
+    │           │       Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CoreUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+    │           │       
+    │           ├───tr
+    │           │       Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CoreUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+    │           │       
+    │           ├───zh-Hans
+    │           │       Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CoreUtilities.resources.dll
+    │           │       Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+    │           │       Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+    │           │       
+    │           └───zh-Hant
+    │                   Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+    │                   Microsoft.TestPlatform.CoreUtilities.resources.dll
+    │                   Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+    │                   Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+    │                   Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+    │                   
+    └───obj
+        │   project.assets.json
+        │   project.nuget.cache
+        │   Tests.csproj.nuget.dgspec.json
+        │   Tests.csproj.nuget.g.props
+        │   Tests.csproj.nuget.g.targets
+        │   
+        └───Debug
+            └───net8.0
+                │   .NETCoreApp,Version=v8.0.AssemblyAttributes.cs
+                │   Tests.AssemblyInfo.cs
+                │   Tests.AssemblyInfoInputs.cache
+                │   Tests.assets.cache
+                │   Tests.csproj.AssemblyReference.cache
+                │   Tests.csproj.CoreCompileInputs.cache
+                │   Tests.csproj.FileListAbsolute.txt
+                │   Tests.csproj.Up2Date
+                │   Tests.dll
+                │   Tests.GeneratedMSBuildEditorConfig.editorconfig
+                │   Tests.genruntimeconfig.cache
+                │   Tests.GlobalUsings.g.cs
+                │   Tests.pdb
+                │   
+                ├───ref
+                │       Tests.dll
+                │       
+                └───refint
+                        Tests.dll
+                        
