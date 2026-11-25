@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Server.Infrastructure;
 using Server.Security;
 using Server.Services;
 using Shared.Dtos;
@@ -17,7 +18,7 @@ public class RequestsController : ControllerBase
     }
 
     [HttpGet]
-    [AuthorizeRole]
+    [AuthorizeRole("Руководитель отдела", "Главный экономист", "Директор", "Администратор")]
     public async Task<IActionResult> GetAll(
         [FromQuery] string? status,
         [FromQuery] int? projectId,
@@ -49,8 +50,7 @@ public class RequestsController : ControllerBase
     {
         try
         {
-            var userId = HttpContext.Items["UserId"] is int uid ? uid : 0;
-            return Ok(await _requests.ApproveAsync(id, request?.Comment, userId, cancellationToken));
+            return Ok(await _requests.ApproveAsync(id, request?.Comment, HttpContext.CurrentUserId(), cancellationToken));
         }
         catch (KeyNotFoundException ex) { return NotFound(new { error = ex.Message }); }
         catch (InvalidOperationException ex) { return Conflict(new { error = ex.Message }); }
@@ -62,8 +62,7 @@ public class RequestsController : ControllerBase
     {
         try
         {
-            var userId = HttpContext.Items["UserId"] is int uid ? uid : 0;
-            return Ok(await _requests.RejectAsync(id, request?.Comment, userId, cancellationToken));
+            return Ok(await _requests.RejectAsync(id, request?.Comment, HttpContext.CurrentUserId(), cancellationToken));
         }
         catch (ArgumentException ex) { return BadRequest(new { error = ex.Message }); }
         catch (KeyNotFoundException ex) { return NotFound(new { error = ex.Message }); }

@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
-using Server.Commands;
 using Server.Data;
 using Server.Infrastructure;
+using Server.Security;
 using Server.Services;
+using System.Threading.RateLimiting;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
@@ -26,9 +28,9 @@ try
     AppConfig.Instance.Initialize(builder.Configuration);
 
     builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseNpgsql(AppConfig.Instance.ConnectionString));
+        options.UseNpgsql(AppConfig.Instance.ConnectionString, npgsql =>
+            npgsql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
-    builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
     builder.Services.AddScoped<AuditService>();
     builder.Services.AddScoped<AuthService>();
     builder.Services.AddScoped<SettingsService>();
@@ -42,7 +44,7 @@ try
     builder.Services.AddScoped<ReportService>();
     builder.Services.AddScoped<DecisionService>();
     builder.Services.AddSingleton<TokenService>();
-    builder.Services.AddSingleton<CommandDispatcher>();
+    builder.Services.AddSingleton<IAesEncryptor, AesEncryptor>();
 
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
@@ -50,7 +52,23 @@ try
 
     builder.Services.AddCors(options =>
         options.AddDefaultPolicy(policy =>
-            policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+            policy.WithOrigins("http://localhost:5155")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()));
+
+    builder.Services.AddRateLimiter(options =>
+    {
+        options.AddPolicy("login", httpContext =>
+            RateLimitPartition.GetFixedWindowLimiter(
+                partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                factory: partition => new FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = 5,
+                    Window = TimeSpan.FromMinutes(1),
+                    QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                    QueueLimit = 0
+                }));
+    });
 
     builder.WebHost.UseUrls($"http://{AppConfig.Instance.ServerAddress}:{AppConfig.Instance.ServerPort}");
 
@@ -58,9 +76,14 @@ try
 
     app.UseSerilogRequestLogging();
     app.UseMiddleware<ExceptionMiddleware>();
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseRouting();
     app.UseCors();
+    app.UseRateLimiter();
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
     app.MapControllers();
 
     using (var scope = app.Services.CreateScope())

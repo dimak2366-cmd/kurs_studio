@@ -53,7 +53,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Наименование" Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
                 <DataGridTextColumn Header="КОСГУ"         Binding="{Binding KosguCode, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
-                <DataGridTextColumn Header="План, BYN"     Binding="{Binding PlanAmount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" Width="110"/>
+                <DataGridTextColumn Header="План, BYN"     Binding="{Binding PlanAmount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsReadOnly="True" Width="110"/>
                 <DataGridTextColumn Header="Лимит, BYN"    Binding="{Binding LimitAmount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" Width="110"/>
                 <DataGridTextColumn Header="Кол-во"        Binding="{Binding Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" Width="90"/>
                 <DataGridTextColumn Header="Цена, BYN"     Binding="{Binding Price, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" Width="110"/>

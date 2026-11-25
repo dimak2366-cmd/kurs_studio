@@ -10,6 +10,8 @@ public class ExpenseItemDto
     public decimal Quantity { get; set; }
     public decimal Price { get; set; }
     public decimal FactAmount { get; set; }
+    public string LimitStatus { get; set; } = "Предложен";
+    public string? LimitReturnComment { get; set; }
 }
 
 public class SmetaDto

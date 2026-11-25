@@ -28,6 +28,7 @@ public partial class ActualExpenseEditDialog : Window
             // Смета — заблокирована, показываем текущую
             SmetaPanel.Visibility = Visibility.Visible;
             AmountBox.Text = existing.Amount.ToString("F2");
+            QuantityBox.Text = existing.Quantity.ToString("F3");
             DatePicker.SelectedDate = existing.Date.Date;
             DocNumberBox.Text = existing.DocumentNumber;
             DocDatePicker.SelectedDate = existing.DocumentDate.Date;
@@ -37,6 +38,9 @@ public partial class ActualExpenseEditDialog : Window
                 DocTypeCombo.Text = existing.DocumentType;
             }
         }
+
+        if (existing == null)
+            QuantityBox.Text = "1";
 
         _ = LoadSmetasAsync(existing?.SmetaId);
     }
@@ -87,6 +91,11 @@ public partial class ActualExpenseEditDialog : Window
     {
         ErrorText.Text = string.Empty;
 
+        if (!decimal.TryParse(QuantityBox.Text, out var qty) || qty <= 0)
+        {
+            ErrorText.Text = "Укажите корректное количество (положительное число).";
+            return;
+        }
         if (!decimal.TryParse(AmountBox.Text, out var amount) || amount <= 0)
         {
             ErrorText.Text = "Укажите корректную сумму (положительное число).";
@@ -134,6 +143,7 @@ public partial class ActualExpenseEditDialog : Window
                     ExpenseItemId = itemId,
                     Date = DateTime.SpecifyKind(date, DateTimeKind.Utc),
                     Amount = amount,
+                    Quantity = qty,
                     DocumentType = docType,
                     DocumentNumber = DocNumberBox.Text.Trim(),
                     DocumentDate = DateTime.SpecifyKind(docDate, DateTimeKind.Utc)
@@ -146,6 +156,7 @@ public partial class ActualExpenseEditDialog : Window
                 {
                     Date = DateTime.SpecifyKind(date, DateTimeKind.Utc),
                     Amount = amount,
+                    Quantity = qty,
                     DocumentType = docType,
                     DocumentNumber = DocNumberBox.Text.Trim(),
                     DocumentDate = DateTime.SpecifyKind(docDate, DateTimeKind.Utc)

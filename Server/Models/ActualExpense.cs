@@ -10,6 +10,7 @@ public class ActualExpense
     public int ExpenseItemId { get; set; }
     public DateTime Date { get; set; }
     public decimal Amount { get; set; }
+    public decimal Quantity { get; set; }            // фактическое количество / численность
     public string DocumentType { get; set; } = string.Empty;
     public string DocumentNumber { get; set; } = string.Empty;
     public DateTime DocumentDate { get; set; }

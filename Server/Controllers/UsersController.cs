@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using Server.Data;
+using Server.Infrastructure;
 using Server.Models;
 using Server.Security;
 using Server.Services;
@@ -85,12 +87,18 @@ public class UsersController : ControllerBase
             FailedAttempts = 0
         };
         _db.Users.Add(user);
-        await _db.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await _db.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: "23505" })
+        {
+            return Conflict(new { error = "Пользователь с таким логином уже существует." });
+        }
 
         await _auditService.LogAsync(CurrentUserId(), "Create", "User", user.Id.ToString(),
             $"Создан пользователь {user.Login}", cancellationToken);
 
-        // Перезагружаем с навигационными свойствами для ответа.
         await _db.Entry(user).Reference(u => u.Role).LoadAsync(cancellationToken);
         if (user.DepartmentId.HasValue)
         {
@@ -235,8 +243,8 @@ public class UsersController : ControllerBase
         return Ok(new { success = true });
     }
 
-    private int? CurrentUserId() =>
-        HttpContext.Items["UserId"] is int id ? id : null;
+    private int CurrentUserId() =>
+        HttpContext.Items["UserId"] is int id ? id : throw new UnauthorizedAccessException("Не удалось определить пользователя для аудита.");
 
     private static UserDto ToDto(User u) => new()
     {

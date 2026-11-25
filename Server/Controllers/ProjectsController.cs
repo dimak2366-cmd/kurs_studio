@@ -65,11 +65,7 @@ public class ProjectsController : ControllerBase
             return NotFound(new { error = "Проект не найден." });
         }
 
-        if (session != null && session.RoleName == "Руководитель отдела" &&
-            session.DepartmentId.HasValue && p.DepartmentId != session.DepartmentId.Value)
-        {
-            return Forbid();
-        }
+        AccessGuard.EnsureDepartmentAccess(HttpContext, p.DepartmentId);
 
         return Ok(new ProjectDto
         {

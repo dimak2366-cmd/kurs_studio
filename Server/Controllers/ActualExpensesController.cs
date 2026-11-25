@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Server.Infrastructure;
 using Server.Security;
 using Server.Services;
 using Shared.Dtos;
@@ -37,8 +38,7 @@ public class ActualExpensesController : ControllerBase
     {
         try
         {
-            var userId = HttpContext.Items["UserId"] is int id ? id : 0;
-            var dto = await _expenseService.CreateAsync(request, userId, cancellationToken);
+            var dto = await _expenseService.CreateAsync(request, HttpContext.CurrentUserId(), cancellationToken);
             return CreatedAtAction(nameof(GetAll), new { id = dto.Id }, dto);
         }
         catch (ArgumentException ex) { return BadRequest(new { error = ex.Message }); }
@@ -52,8 +52,7 @@ public class ActualExpensesController : ControllerBase
     {
         try
         {
-            var userId = HttpContext.Items["UserId"] is int id2 ? id2 : 0;
-            return Ok(await _expenseService.UpdateAsync(id, request, userId, cancellationToken));
+            return Ok(await _expenseService.UpdateAsync(id, request, HttpContext.CurrentUserId(), cancellationToken));
         }
         catch (ArgumentException ex) { return BadRequest(new { error = ex.Message }); }
         catch (KeyNotFoundException ex) { return NotFound(new { error = ex.Message }); }
@@ -66,8 +65,7 @@ public class ActualExpensesController : ControllerBase
     {
         try
         {
-            var userId = HttpContext.Items["UserId"] is int id2 ? id2 : 0;
-            return Ok(await _expenseService.VerifyAsync(id, userId, cancellationToken));
+            return Ok(await _expenseService.VerifyAsync(id, HttpContext.CurrentUserId(), cancellationToken));
         }
         catch (KeyNotFoundException ex) { return NotFound(new { error = ex.Message }); }
         catch (InvalidOperationException ex) { return Conflict(new { error = ex.Message }); }
@@ -79,8 +77,7 @@ public class ActualExpensesController : ControllerBase
     {
         try
         {
-            var userId = HttpContext.Items["UserId"] is int uid ? uid : 0;
-            await _expenseService.DeleteAsync(id, userId, cancellationToken);
+            await _expenseService.DeleteAsync(id, HttpContext.CurrentUserId(), cancellationToken);
             return Ok(new { success = true });
         }
         catch (KeyNotFoundException ex) { return NotFound(new { error = ex.Message }); }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Server.Infrastructure;
 using Server.Security;
 using Server.Services;
 using Shared.Dtos;
@@ -17,7 +18,7 @@ public class PeriodsController : ControllerBase
     }
 
     [HttpGet]
-    [AuthorizeRole]
+    [AuthorizeRole("Главный экономист", "Директор", "Администратор", "Бухгалтер")]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         return Ok(await _periodService.GetAllAsync(cancellationToken));
@@ -29,8 +30,7 @@ public class PeriodsController : ControllerBase
     {
         try
         {
-            var userId = HttpContext.Items["UserId"] is int uid ? uid : 0;
-            return Ok(await _periodService.CloseAsync(id, userId, cancellationToken));
+            return Ok(await _periodService.CloseAsync(id, HttpContext.CurrentUserId(), cancellationToken));
         }
         catch (KeyNotFoundException ex) { return NotFound(new { error = ex.Message }); }
         catch (InvalidOperationException ex) { return Conflict(new { error = ex.Message }); }

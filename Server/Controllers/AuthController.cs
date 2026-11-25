@@ -1,6 +1,7 @@
-﻿using System.Text.Json;
+﻿using System.Security.Cryptography;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
-using Server.Infrastructure;
+using Microsoft.AspNetCore.RateLimiting;
 using Server.Security;
 using Server.Services;
 using Shared.Dtos;
@@ -13,15 +14,21 @@ public class AuthController : ControllerBase
 {
     private readonly AuthService _authService;
     private readonly TokenService _tokenService;
+    private readonly IAesEncryptor _aesEncryptor;
 
-    public AuthController(AuthService authService, TokenService tokenService)
+    public AuthController(
+        AuthService authService,
+        TokenService tokenService,
+        IAesEncryptor aesEncryptor)
     {
         _authService = authService;
         _tokenService = tokenService;
+        _aesEncryptor = aesEncryptor;
     }
 
     /// <summary>Вход в систему. Возвращает токен и данные пользователя.</summary>
     [HttpPost("login")]
+    [EnableRateLimiting("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
         try
@@ -44,6 +51,7 @@ public class AuthController : ControllerBase
     /// внутри зашифрован JSON LoginRequest. Ответ не шифруется (для простоты клиента).
     /// </summary>
     [HttpPost("login-encrypted")]
+    [EnableRateLimiting("login")]
     public async Task<IActionResult> LoginEncrypted([FromBody] EncryptedPayload payload, CancellationToken cancellationToken)
     {
         if (payload == null || string.IsNullOrWhiteSpace(payload.Payload))
@@ -54,16 +62,27 @@ public class AuthController : ControllerBase
         string json;
         try
         {
-            json = AesEncryptor.Decrypt(payload.Payload,
-                AppConfig.Instance.AesKeyBase64, AppConfig.Instance.AesIvBase64);
+            json = _aesEncryptor.Decrypt(payload.Payload);
         }
-        catch (Exception)
+        catch (CryptographicException)
+        {
+            return BadRequest(new { error = "Не удалось расшифровать payload." });
+        }
+        catch (ArgumentException)
         {
             return BadRequest(new { error = "Не удалось расшифровать payload." });
         }
 
-        var request = JsonSerializer.Deserialize<LoginRequest>(json,
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        LoginRequest? request;
+        try
+        {
+            request = JsonSerializer.Deserialize<LoginRequest>(json,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+        catch (JsonException)
+        {
+            return BadRequest(new { error = "Некорректный JSON внутри payload." });
+        }
 
         if (request == null)
         {

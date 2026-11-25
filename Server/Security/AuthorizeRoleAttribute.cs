@@ -50,6 +50,8 @@ public sealed class AuthorizeRoleAttribute : ActionFilterAttribute
 
         context.HttpContext.Items["Session"] = session;
         context.HttpContext.Items["UserId"] = session.UserId;
+        context.HttpContext.Items["RoleName"] = session.RoleName;
+        context.HttpContext.Items["DepartmentId"] = session.DepartmentId;
         base.OnActionExecuting(context);
     }
 }

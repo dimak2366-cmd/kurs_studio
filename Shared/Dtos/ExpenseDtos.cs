@@ -1,6 +1,4 @@
-﻿namespace Shared.Dtos;
-
-public class ActualExpenseDto
+﻿public class ActualExpenseDto
 {
     public int Id { get; set; }
     public int ExpenseItemId { get; set; }
@@ -15,6 +13,7 @@ public class ActualExpenseDto
     public int PeriodMonth { get; set; }
     public DateTime Date { get; set; }
     public decimal Amount { get; set; }
+    public decimal Quantity { get; set; }         // ← НОВОЕ
     public string DocumentType { get; set; } = string.Empty;
     public string DocumentNumber { get; set; } = string.Empty;
     public DateTime DocumentDate { get; set; }
@@ -26,6 +25,7 @@ public class CreateActualExpenseRequest
     public int ExpenseItemId { get; set; }
     public DateTime Date { get; set; }
     public decimal Amount { get; set; }
+    public decimal Quantity { get; set; } = 1m;   // ← НОВОЕ, дефолт 1
     public string DocumentType { get; set; } = string.Empty;
     public string DocumentNumber { get; set; } = string.Empty;
     public DateTime DocumentDate { get; set; }
@@ -35,6 +35,7 @@ public class UpdateActualExpenseRequest
 {
     public DateTime Date { get; set; }
     public decimal Amount { get; set; }
+    public decimal Quantity { get; set; } = 1m;   // ← НОВОЕ
     public string DocumentType { get; set; } = string.Empty;
     public string DocumentNumber { get; set; } = string.Empty;
     public DateTime DocumentDate { get; set; }

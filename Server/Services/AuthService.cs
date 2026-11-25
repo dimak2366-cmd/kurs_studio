@@ -78,6 +78,15 @@ public sealed class AuthService
         // Успешный вход — сбрасываем счётчик и блокировку.
         user.FailedAttempts = 0;
         user.LockoutUntil = null;
+
+        // Прозрачная миграция legacy-хешей на PBKDF2
+        if (PasswordHasher.NeedsRehash(user.PasswordHash))
+        {
+            var newSalt = PasswordHasher.GenerateSalt();
+            user.PasswordSalt = newSalt;
+            user.PasswordHash = PasswordHasher.ComputeHash(request.Password, newSalt);
+        }
+
         await _db.SaveChangesAsync(cancellationToken);
 
         var session = _tokenService.CreateSession(user);

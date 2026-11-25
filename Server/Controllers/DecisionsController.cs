@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Server.Infrastructure;
 using Server.Security;
 using Server.Services;
 using Shared.Dtos;
@@ -17,7 +18,7 @@ public class DecisionsController : ControllerBase
     }
 
     [HttpGet]
-    [AuthorizeRole]
+    [AuthorizeRole("Директор", "Главный экономист", "Администратор")]
     public async Task<IActionResult> GetAll(
         [FromQuery] int? periodId,
         [FromQuery] int? expenseItemId,
@@ -30,8 +31,7 @@ public class DecisionsController : ControllerBase
     {
         try
         {
-            var userId = HttpContext.Items["UserId"] is int uid ? uid : 0;
-            return Ok(await _decisions.CreateAsync(request, userId, cancellationToken));
+            return Ok(await _decisions.CreateAsync(request, HttpContext.CurrentUserId(), cancellationToken));
         }
         catch (ArgumentException ex) { return BadRequest(new { error = ex.Message }); }
         catch (KeyNotFoundException ex) { return NotFound(new { error = ex.Message }); }

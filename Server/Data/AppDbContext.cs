@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿﻿using Microsoft.EntityFrameworkCore;
 using Server.Models;
 
 namespace Server.Data;
@@ -113,6 +113,7 @@ public class AppDbContext : DbContext
             e.ToTable("actual_expenses");
             e.HasKey(x => x.Id);
             e.Property(x => x.Amount).HasPrecision(18, 2);
+            e.Property(x => x.Quantity).HasPrecision(18, 3);
             e.Property(x => x.DocumentType).IsRequired().HasMaxLength(32);
             e.Property(x => x.DocumentNumber).IsRequired().HasMaxLength(64);
             e.Property(x => x.Status).IsRequired().HasMaxLength(32);
@@ -120,13 +121,19 @@ public class AppDbContext : DbContext
             e.HasOne(x => x.Period).WithMany(p => p.ActualExpenses).HasForeignKey(x => x.PeriodId).OnDelete(DeleteBehavior.Restrict);
             e.HasIndex(x => x.ExpenseItemId);
             e.HasIndex(x => x.PeriodId);
+            // Защита от двойного ввода одного документа в одном периоде по одной статье.
+            e.HasIndex(x => new { x.ExpenseItemId, x.PeriodId, x.DocumentNumber })
+             .IsUnique()
+             .HasDatabaseName("ux_actual_expenses_doc");
         });
 
         mb.Entity<Period>(e =>
         {
             e.ToTable("periods");
             e.HasKey(x => x.Id);
-            e.HasIndex(x => new { x.Year, x.Month }).IsUnique();
+            e.HasIndex(x => new { x.Year, x.Month })
+             .IsUnique()
+             .HasDatabaseName("ux_periods_year_month");
         });
 
         mb.Entity<ExpenseRequest>(e =>

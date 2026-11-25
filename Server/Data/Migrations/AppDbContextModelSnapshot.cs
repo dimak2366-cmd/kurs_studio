@@ -56,6 +56,10 @@ namespace Server.Data.Migrations
                     b.Property<int>("PeriodId")
                         .HasColumnType("integer");
 
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("numeric(18,3)");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(32)
@@ -66,6 +70,10 @@ namespace Server.Data.Migrations
                     b.HasIndex("ExpenseItemId");
 
                     b.HasIndex("PeriodId");
+
+                    b.HasIndex("ExpenseItemId", "PeriodId", "DocumentNumber")
+                        .IsUnique()
+                        .HasDatabaseName("ux_actual_expenses_doc");
 
                     b.ToTable("actual_expenses", (string)null);
                 });
@@ -247,6 +255,13 @@ namespace Server.Data.Migrations
                     b.Property<decimal>("LimitAmount")
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)");
+
+                    b.Property<string>("LimitReturnComment")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LimitStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()

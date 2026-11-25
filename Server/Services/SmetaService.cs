@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.Models;
-using Server.Services;
+using Server.Security;
 using Shared.Dtos;
 
 namespace Server.Services;
@@ -29,9 +29,12 @@ public sealed class SmetaService
         if (year.HasValue) query = query.Where(s => s.Year == year.Value);
         if (!string.IsNullOrWhiteSpace(status)) query = query.Where(s => s.Status == status);
 
-        if (session.RoleName == "Руководитель отдела" && session.DepartmentId.HasValue)
+        if (session.RoleName == "Руководитель отдела")
         {
-            query = query.Where(s => s.Project!.DepartmentId == session.DepartmentId.Value);
+            if (!session.DepartmentId.HasValue)
+                throw new ForbiddenException("Не удалось определить отдел пользователя.");
+            var deptId = session.DepartmentId.Value;
+            query = query.Where(s => s.Project!.DepartmentId == deptId);
         }
 
         var list = await query.OrderByDescending(s => s.CreatedAt).ToListAsync(cancellationToken);
@@ -62,10 +65,12 @@ public sealed class SmetaService
             throw new KeyNotFoundException("Проект не найден.");
         }
 
-        if (session.RoleName == "Руководитель отдела" && session.DepartmentId.HasValue
-            && project.DepartmentId != session.DepartmentId.Value)
+        if (session.RoleName == "Руководитель отдела")
         {
-            throw new UnauthorizedAccessException("Нет прав на просмотр статей этого проекта.");
+            if (!session.DepartmentId.HasValue)
+                throw new ForbiddenException("Не удалось определить отдел пользователя.");
+            if (project.DepartmentId != session.DepartmentId.Value)
+                throw new ForbiddenException("Нет прав на просмотр статей этого проекта.");
         }
 
         return await _db.ExpenseItems
@@ -127,10 +132,10 @@ public sealed class SmetaService
             {
                 Name = item.Name.Trim(),
                 KosguCode = item.KosguCode.Trim(),
-                PlanAmount = item.PlanAmount,
-                LimitAmount = item.LimitAmount,
                 Quantity = item.Quantity,
-                Price = item.Price
+                Price = item.Price,
+                PlanAmount = item.Quantity * item.Price,
+                LimitAmount = item.LimitAmount
             });
         }
 
@@ -165,10 +170,17 @@ public sealed class SmetaService
                 throw new ArgumentException("Суммы и количества не могут быть отрицательными.");
             }
 
-            item.PlanAmount = itemReq.PlanAmount;
-            item.LimitAmount = itemReq.LimitAmount;
+            // Изменение лимита требует повторного согласования директором.
+            if (item.LimitAmount != itemReq.LimitAmount)
+            {
+                item.LimitStatus = "Предложен";
+                item.LimitReturnComment = null;
+            }
+
             item.Quantity = itemReq.Quantity;
             item.Price = itemReq.Price;
+            item.LimitAmount = itemReq.LimitAmount;
+            item.PlanAmount = item.Quantity * item.Price;
         }
 
         await _db.SaveChangesAsync(cancellationToken);
@@ -190,6 +202,14 @@ public sealed class SmetaService
         if (smeta.ExpenseItems.Count == 0)
         {
             throw new InvalidOperationException("Нельзя утвердить смету без статей расходов.");
+        }
+
+        // Смету нельзя утвердить, пока хотя бы один лимит не согласован директором.
+        var pendingLimits = smeta.ExpenseItems.Count(i => i.LimitStatus == "Предложен");
+        if (pendingLimits > 0)
+        {
+            throw new InvalidOperationException(
+                $"Нельзя утвердить смету: {pendingLimits} статей имеют статус лимита «Предложен». Согласуйте лимиты перед утверждением.");
         }
 
         smeta.Status = "Утверждена";
@@ -251,10 +271,10 @@ public sealed class SmetaService
             {
                 Name = item.Name,
                 KosguCode = item.KosguCode,
-                PlanAmount = item.PlanAmount,
-                LimitAmount = item.LimitAmount,
                 Quantity = item.Quantity,
-                Price = item.Price
+                Price = item.Price,
+                PlanAmount = item.Quantity * item.Price,
+                LimitAmount = item.LimitAmount
             });
         }
 
@@ -317,10 +337,12 @@ public sealed class SmetaService
 
     private static void EnsureCanView(SessionInfo session, Smeta smeta)
     {
-        if (session.RoleName == "Руководитель отдела" && session.DepartmentId.HasValue
-            && smeta.Project.DepartmentId != session.DepartmentId.Value)
+        if (session.RoleName == "Руководитель отдела")
         {
-            throw new UnauthorizedAccessException("Нет прав на просмотр смет этого отдела.");
+            if (!session.DepartmentId.HasValue)
+                throw new ForbiddenException("Не удалось определить отдел пользователя.");
+            if (smeta.Project.DepartmentId != session.DepartmentId.Value)
+                throw new ForbiddenException("Нет прав на просмотр смет этого отдела.");
         }
     }
 

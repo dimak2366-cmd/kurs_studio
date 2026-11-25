@@ -7,7 +7,8 @@ namespace Server.Services;
 
 /// <summary>
 /// Управление отчётными периодами: список, закрытие.
-/// Закрыть период можно только когда все расходы периода сверены.
+/// Закрытие атомарно: строка Period блокируется FOR UPDATE на время транзакции,
+/// поэтому параллельные вставки расходов в этот период сериализуются с закрытием.
 /// </summary>
 public sealed class PeriodService
 {
@@ -27,30 +28,25 @@ public sealed class PeriodService
             .OrderByDescending(p => p.Year).ThenByDescending(p => p.Month)
             .ToListAsync(cancellationToken);
 
-        return periods.Select(p => new PeriodDto
-        {
-            Id = p.Id,
-            Year = p.Year,
-            Month = p.Month,
-            IsClosed = p.IsClosed,
-            ClosedAt = p.ClosedAt,
-            ExpenseCount = p.ActualExpenses.Count,
-            UnverifiedCount = p.ActualExpenses.Count(a => a.Status != "Сверен"),
-            TotalAmount = p.ActualExpenses.Sum(a => a.Amount)
-        }).ToList();
+        return periods.Select(ToDto).ToList();
     }
 
     public async Task<PeriodDto> CloseAsync(int id, int userId, CancellationToken cancellationToken)
     {
+        await using var tx = await _db.Database.BeginTransactionAsync(cancellationToken);
+
+        // 1. Блокируем строку периода FOR UPDATE.
+        //    Параллельные CreateAsync/UpdateAsync по этому же периоду
+        //    тоже блокируются на этой строке (см. ExpenseService).
         var period = await _db.Periods
-            .Include(p => p.ActualExpenses)
-            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken)
+            .FromSqlInterpolated($"SELECT * FROM periods WHERE \"Id\" = {id} FOR UPDATE")
+            .FirstOrDefaultAsync(cancellationToken)
             ?? throw new KeyNotFoundException("Отчётный период не найден.");
 
+        await _db.Entry(period).Collection(p => p.ActualExpenses).LoadAsync(cancellationToken);
+
         if (period.IsClosed)
-        {
             throw new InvalidOperationException($"Период {period.Year:D4}/{period.Month:D2} уже закрыт.");
-        }
 
         var unverified = period.ActualExpenses.Count(a => a.Status != "Сверен");
         if (unverified > 0)
@@ -59,23 +55,30 @@ public sealed class PeriodService
                 $"В периоде {unverified} несверенных записей. Все расходы должны быть сверены перед закрытием.");
         }
 
+        var totalCount  = period.ActualExpenses.Count;
+        var totalAmount = period.ActualExpenses.Sum(a => a.Amount);
+
         period.IsClosed = true;
         period.ClosedAt = DateTime.UtcNow;
         await _db.SaveChangesAsync(cancellationToken);
+        await tx.CommitAsync(cancellationToken);
 
         await _audit.LogAsync(userId, "Close", "Period", period.Id.ToString(),
-            $"Закрыт отчётный период {period.Year:D4}/{period.Month:D2} ({period.ActualExpenses.Count} записей, {period.ActualExpenses.Sum(a => a.Amount):N2} BYN)", cancellationToken);
+            $"Закрыт отчётный период {period.Year:D4}/{period.Month:D2} " +
+            $"({totalCount} записей, {totalAmount:N2} BYN)", cancellationToken);
 
-        return new PeriodDto
-        {
-            Id = period.Id,
-            Year = period.Year,
-            Month = period.Month,
-            IsClosed = period.IsClosed,
-            ClosedAt = period.ClosedAt,
-            ExpenseCount = period.ActualExpenses.Count,
-            UnverifiedCount = 0,
-            TotalAmount = period.ActualExpenses.Sum(a => a.Amount)
-        };
+        return ToDto(period);
     }
+
+    private static PeriodDto ToDto(Period p) => new()
+    {
+        Id = p.Id,
+        Year = p.Year,
+        Month = p.Month,
+        IsClosed = p.IsClosed,
+        ClosedAt = p.ClosedAt,
+        ExpenseCount = p.ActualExpenses.Count,
+        UnverifiedCount = p.ActualExpenses.Count(a => a.Status != "Сверен"),
+        TotalAmount = p.ActualExpenses.Sum(a => a.Amount)
+    };
 }

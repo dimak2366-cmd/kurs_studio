@@ -1,193 +1,183 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
-using Server.Security;
 using Server.Services;
 using Shared.Dtos;
 
 namespace Server.Controllers;
 
+/// <summary>
+/// План-фактный и факторный анализ. Закрывает фронтовые вызовы:
+///   GET /api/analysis/deviation/{smetaId}
+///   GET /api/analysis/materials[?smetaId=N]  и  GET /api/analysis/materials/{smetaId}
+///   GET /api/analysis/labor[?smetaId=N]      и  GET /api/analysis/labor/{smetaId}
+/// </summary>
 [ApiController]
 [Route("api/analysis")]
-public class AnalysisController : ControllerBase
+public sealed class AnalysisController : ControllerBase
 {
-    private readonly AnalysisService _analysis;
     private readonly AppDbContext _db;
+    private readonly AnalysisService _analysis;
 
-    public AnalysisController(AnalysisService analysis, AppDbContext db)
+    public AnalysisController(AppDbContext db, AnalysisService analysis)
     {
-        _analysis = analysis;
         _db = db;
+        _analysis = analysis;
     }
 
-    // ---------- План-фактный анализ по всей смете ----------
-
-    /// <summary>Общее отклонение по смете с разбивкой по статьям.</summary>
+    // ──────────────────────────────────────────────────────────────
+    // GET /api/analysis/deviation/{smetaId}
+    // ──────────────────────────────────────────────────────────────
     [HttpGet("deviation/{smetaId:int}")]
-    [AuthorizeRole]
-    public async Task<IActionResult> GetDeviation(int smetaId, CancellationToken cancellationToken)
+    public async Task<ActionResult<SmetaDeviationReportDto>> GetDeviation(
+        int smetaId, CancellationToken ct)
     {
         var smeta = await _db.Smetas
-            .Include(s => s.ExpenseItems).ThenInclude(i => i.ActualExpenses)
-            .FirstOrDefaultAsync(s => s.Id == smetaId, cancellationToken);
+            .AsNoTracking()
+            .Include(s => s.ExpenseItems)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(s => s.Id == smetaId, ct);
 
-        if (smeta == null)
-        {
-            return NotFound(new { error = "Смета не найдена." });
-        }
+        if (smeta is null)
+            return NotFound(new { message = $"Смета {smetaId} не найдена" });
 
-        var items = smeta.ExpenseItems.Select(i =>
-        {
-            var plan = i.PlanAmount;
-            var fact = i.ActualExpenses.Sum(a => a.Amount);
-            return new ExpenseItemDeviationDto
+        var itemIds = smeta.ExpenseItems.Select(i => i.Id).ToList();
+
+        var factByItem = itemIds.Count == 0
+            ? new Dictionary<int, decimal>()
+            : await _db.ActualExpenses
+                .Where(a => itemIds.Contains(a.ExpenseItemId))
+                .GroupBy(a => a.ExpenseItemId)
+                .Select(g => new { ItemId = g.Key, Sum = g.Sum(x => x.Amount) })
+                .ToDictionaryAsync(x => x.ItemId, x => x.Sum, ct);
+
+        var rows = smeta.ExpenseItems
+            .OrderBy(i => i.KosguCode).ThenBy(i => i.Name)
+            .Select(i =>
             {
-                ExpenseItemId = i.Id,
-                Name = i.Name,
-                KosguCode = i.KosguCode,
-                Plan = plan,
-                Fact = fact,
-                Absolute = _analysis.GetAbsoluteDeviation(fact, plan),
-                RelativePercent = _analysis.GetRelativeDeviation(fact, plan)
-            };
-        }).ToList();
+                var fact = factByItem.TryGetValue(i.Id, out var s) ? s : 0m;
+                return new ExpenseItemDeviationDto
+                {
+                    ExpenseItemId   = i.Id,
+                    Name            = i.Name,
+                    KosguCode       = i.KosguCode,
+                    Plan            = i.PlanAmount,
+                    Fact            = fact,
+                    Absolute        = _analysis.GetAbsoluteDeviation(fact, i.PlanAmount),
+                    RelativePercent = _analysis.GetRelativeDeviation(fact, i.PlanAmount),
+                };
+            })
+            .ToList();
 
-        var totalPlan = items.Sum(x => x.Plan);
-        var totalFact = items.Sum(x => x.Fact);
+        var totalPlan = rows.Sum(r => r.Plan);
+        var totalFact = rows.Sum(r => r.Fact);
 
         return Ok(new SmetaDeviationReportDto
         {
-            SmetaId = smeta.Id,
-            FormCode = smeta.FormCode,
-            Year = smeta.Year,
-            TotalPlan = totalPlan,
-            TotalFact = totalFact,
-            TotalAbsolute = _analysis.GetAbsoluteDeviation(totalFact, totalPlan),
+            SmetaId              = smeta.Id,
+            FormCode             = smeta.FormCode,
+            Year                 = smeta.Year,
+            TotalPlan            = totalPlan,
+            TotalFact            = totalFact,
+            TotalAbsolute        = totalFact - totalPlan,
             TotalRelativePercent = _analysis.GetRelativeDeviation(totalFact, totalPlan),
-            Items = items
+            Items                = rows,
         });
     }
 
-    // ---------- Факторный анализ «Материалы» ----------
-
-    /// <summary>
-    /// Расчёт по формулам (3)–(4) по переданным параметрам.
-    /// Пример: /api/analysis/materials?qPlan=100&amp;qFact=110&amp;pPlan=1200&amp;pFact=1300
-    /// </summary>
+    // ──────────────────────────────────────────────────────────────
+    // GET /api/analysis/materials  (query) и /materials/{smetaId} (path)
+    // ──────────────────────────────────────────────────────────────
     [HttpGet("materials")]
-    [AuthorizeRole]
-    public IActionResult AnalyzeMaterialsByParams(
-        [FromQuery] decimal qPlan,
-        [FromQuery] decimal qFact,
-        [FromQuery] decimal pPlan,
-        [FromQuery] decimal pFact)
+    public Task<ActionResult<List<MaterialAnalysisResult>>> GetMaterials(
+        [FromQuery] int? smetaId, CancellationToken ct)
+        => GetMaterialsCore(smetaId, ct);
+
+    [HttpGet("materials/{smetaId:int}")]
+    public Task<ActionResult<List<MaterialAnalysisResult>>> GetMaterialsBySmeta(
+        [FromRoute] int smetaId, CancellationToken ct)
+        => GetMaterialsCore(smetaId, ct);
+
+    private async Task<ActionResult<List<MaterialAnalysisResult>>> GetMaterialsCore(
+        int? smetaId, CancellationToken ct)
     {
-        try
+        var q = _db.ExpenseItems.AsNoTracking().Where(i => i.Name == "Материалы");
+        if (smetaId.HasValue) q = q.Where(i => i.SmetaId == smetaId.Value);
+        var items = await q.ToListAsync(ct);
+
+        if (items.Count == 0)
+            return Ok(new List<MaterialAnalysisResult>());
+
+        var itemIds = items.Select(i => i.Id).ToList();
+        var factByItem = await _db.ActualExpenses
+            .Where(a => itemIds.Contains(a.ExpenseItemId))
+            .GroupBy(a => a.ExpenseItemId)
+            .Select(g => new
+            {
+                ItemId = g.Key,
+                Amount = g.Sum(x => x.Amount),
+                Qty    = g.Sum(x => x.Quantity),
+            })
+            .ToDictionaryAsync(x => x.ItemId, x => x, ct);
+
+        var result = new List<MaterialAnalysisResult>(items.Count);
+        foreach (var i in items)
         {
-            return Ok(_analysis.AnalyzeMaterials(qPlan, qFact, pPlan, pFact));
+            factByItem.TryGetValue(i.Id, out var f);
+            var qFact = f?.Qty ?? 0m;
+            var pFact = qFact > 0m ? Math.Round((f?.Amount ?? 0m) / qFact, 2) : 0m;
+            result.Add(_analysis.AnalyzeMaterials(
+                qPlan: i.Quantity, qFact: qFact,
+                pPlan: i.Price,    pFact: pFact));
         }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
+        return Ok(result);
     }
 
-    /// <summary>
-    /// Факторный анализ материалов по статье из БД.
-    /// План Q и P берутся из статьи, факт — сумма фактических расходов.
-    /// При отсутствии отдельного учёта Q_факт предполагается равным Q_план,
-    /// тогда P_факт = Факт / Q_план (средняя фактическая цена).
-    /// </summary>
-    [HttpGet("materials/{smetaId:int}/{expenseItemId:int}")]
-    [AuthorizeRole]
-    public async Task<IActionResult> AnalyzeMaterialsFromDb(int smetaId, int expenseItemId, CancellationToken cancellationToken)
-    {
-        var item = await _db.ExpenseItems
-            .Include(i => i.ActualExpenses)
-            .FirstOrDefaultAsync(i => i.Id == expenseItemId && i.SmetaId == smetaId, cancellationToken);
-
-        if (item == null)
-        {
-            return NotFound(new { error = "Статья не найдена в указанной смете." });
-        }
-
-        if (item.Quantity <= 0)
-        {
-            return BadRequest(new { error = "У статьи не задано количество (Quantity <= 0). Факторный анализ невозможен." });
-        }
-
-        var qPlan = item.Quantity;
-        var pPlan = item.Price;
-
-        // Упрощение курсовой: в модели ActualExpense нет отдельного поля ActualQuantity,
-        // поэтому фактическое количество принимается равным плановому (qFact = qPlan),
-        // а фактическая цена вычисляется как средняя: pFact = Σ(Факт) / Q_план.
-        // В промышленной системе потребовалось бы поле ActualQuantity в ActualExpense
-        // или отдельная таблица детализации расхода по количеству и цене.
-        var qFact = qPlan;
-        var factSum = item.ActualExpenses.Sum(a => a.Amount);
-        var pFact = qFact > 0 ? Math.Round(factSum / qFact, 4) : 0m;
-
-        return Ok(_analysis.AnalyzeMaterials(qPlan, qFact, pPlan, pFact));
-    }
-
-    // ---------- Факторный анализ «Фонд оплаты труда» ----------
-
-    /// <summary>
-    /// Расчёт по формулам (5)–(6) по переданным параметрам.
-    /// Пример: /api/analysis/labor?chPlan=10&amp;chFact=11&amp;zPlan=50000&amp;zFact=55000
-    /// </summary>
+    // ──────────────────────────────────────────────────────────────
+    // GET /api/analysis/labor  (query) и /labor/{smetaId} (path)
+    // ──────────────────────────────────────────────────────────────
     [HttpGet("labor")]
-    [AuthorizeRole]
-    public IActionResult AnalyzeLaborByParams(
-        [FromQuery] decimal chPlan,
-        [FromQuery] decimal chFact,
-        [FromQuery] decimal zPlan,
-        [FromQuery] decimal zFact)
+    public Task<ActionResult<List<LaborAnalysisResult>>> GetLabor(
+        [FromQuery] int? smetaId, CancellationToken ct)
+        => GetLaborCore(smetaId, ct);
+
+    [HttpGet("labor/{smetaId:int}")]
+    public Task<ActionResult<List<LaborAnalysisResult>>> GetLaborBySmeta(
+        [FromRoute] int smetaId, CancellationToken ct)
+        => GetLaborCore(smetaId, ct);
+
+    private async Task<ActionResult<List<LaborAnalysisResult>>> GetLaborCore(
+        int? smetaId, CancellationToken ct)
     {
-        try
+        var q = _db.ExpenseItems.AsNoTracking().Where(i => i.Name == "Фонд оплаты труда");
+        if (smetaId.HasValue) q = q.Where(i => i.SmetaId == smetaId.Value);
+        var items = await q.ToListAsync(ct);
+
+        if (items.Count == 0)
+            return Ok(new List<LaborAnalysisResult>());
+
+        var itemIds = items.Select(i => i.Id).ToList();
+        var factByItem = await _db.ActualExpenses
+            .Where(a => itemIds.Contains(a.ExpenseItemId))
+            .GroupBy(a => a.ExpenseItemId)
+            .Select(g => new
+            {
+                ItemId = g.Key,
+                Amount = g.Sum(x => x.Amount),
+                Qty    = g.Sum(x => x.Quantity),
+            })
+            .ToDictionaryAsync(x => x.ItemId, x => x, ct);
+
+        var result = new List<LaborAnalysisResult>(items.Count);
+        foreach (var i in items)
         {
-            return Ok(_analysis.AnalyzeLabor(chPlan, chFact, zPlan, zFact));
+            factByItem.TryGetValue(i.Id, out var f);
+            var chFact = f?.Qty ?? 0m;
+            var zFact = chFact > 0m ? Math.Round((f?.Amount ?? 0m) / chFact, 2) : 0m;
+            result.Add(_analysis.AnalyzeLabor(
+                chPlan: i.Quantity, chFact: chFact,
+                zPlan: i.Price,     zFact: zFact));
         }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
-    }
-
-    /// <summary>
-    /// Факторный анализ ФОТ по статье из БД. Аналогично материалам:
-    /// Ч_факт предполагается равной Ч_план, З_факт = Факт / Ч_план.
-    /// </summary>
-    [HttpGet("labor/{smetaId:int}/{expenseItemId:int}")]
-    [AuthorizeRole]
-    public async Task<IActionResult> AnalyzeLaborFromDb(int smetaId, int expenseItemId, CancellationToken cancellationToken)
-    {
-        var item = await _db.ExpenseItems
-            .Include(i => i.ActualExpenses)
-            .FirstOrDefaultAsync(i => i.Id == expenseItemId && i.SmetaId == smetaId, cancellationToken);
-
-        if (item == null)
-        {
-            return NotFound(new { error = "Статья не найдена в указанной смете." });
-        }
-
-        if (item.Quantity <= 0)
-        {
-            return BadRequest(new { error = "У статьи не задана численность (Quantity <= 0). Факторный анализ невозможен." });
-        }
-
-        var chPlan = item.Quantity;
-        var zPlan = item.Price;
-
-        // Упрощение курсовой: аналогично материалам — фактическая численность
-        // принимается равной плановой (chFact = chPlan), а фактическая средняя
-        // зарплата вычисляется как zFact = Σ(Факт) / Ч_план.
-        // В промышленной системе нужна таблица табельного учёта (численность по месяцам).
-        var chFact = chPlan;
-        var factSum = item.ActualExpenses.Sum(a => a.Amount);
-        var zFact = chFact > 0 ? Math.Round(factSum / chFact, 4) : 0m;
-
-        return Ok(_analysis.AnalyzeLabor(chPlan, chFact, zPlan, zFact));
+        return Ok(result);
     }
 }

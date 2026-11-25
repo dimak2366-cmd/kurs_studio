@@ -21,7 +21,6 @@ public sealed class AppConfig
     public int LockoutMinutes { get; private set; } = 15;
     public int SessionTimeoutMinutes { get; private set; } = 60;
     public string AesKeyBase64 { get; private set; } = string.Empty;
-    public string AesIvBase64 { get; private set; } = string.Empty;
 
     public string BackupPath { get; private set; } = "./Backups";
     public string PgDumpPath { get; private set; } = "pg_dump";
@@ -39,7 +38,6 @@ public sealed class AppConfig
         LockoutMinutes = ParseInt(configuration["Security:LockoutMinutes"], LockoutMinutes);
         SessionTimeoutMinutes = ParseInt(configuration["Security:SessionTimeoutMinutes"], SessionTimeoutMinutes);
         AesKeyBase64 = configuration["Security:AesKeyBase64"] ?? AesKeyBase64;
-        AesIvBase64 = configuration["Security:AesIvBase64"] ?? AesIvBase64;
 
         BackupPath = configuration["Backup:Path"] ?? BackupPath;
         PgDumpPath = configuration["Backup:PgDumpPath"] ?? PgDumpPath;

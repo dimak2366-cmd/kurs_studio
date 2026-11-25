@@ -1,12 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using Server.Data;
 using Server.Models;
+using Server.Security;
 
 namespace Server.Infrastructure;
 
 /// <summary>
-/// Глобальный обработчик исключений. Логирует ошибку в ErrorLog и возвращает
-/// клиенту корректный HTTP-статус (400/401/404/500).
+/// Глобальная обработка исключений: логирование в Serilog + ErrorLog,
+/// маппинг доменных исключений в корректные HTTP-коды, сокрытие деталей 500.
 /// </summary>
 public sealed class ExceptionMiddleware
 {
@@ -19,7 +22,7 @@ public sealed class ExceptionMiddleware
         _logger = logger;
     }
 
-    public async Task InvokeAsync(HttpContext context, IServiceScopeFactory scopeFactory)
+    public async Task InvokeAsync(HttpContext context, AppDbContext db)
     {
         try
         {
@@ -27,51 +30,77 @@ public sealed class ExceptionMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Необработанное исключение: {Message}", ex.Message);
-            await PersistErrorAsync(scopeFactory, ex);
+            var (statusCode, userMessage) = MapException(ex);
 
-            if (context.Response.HasStarted)
+            // 5xx — логируем как Error с полным стеком; 4xx — Warning без стека.
+            if (statusCode >= 500)
+                _logger.LogError(ex, "Необработанная ошибка {Path}", context.Request.Path);
+            else
+                _logger.LogWarning("Ожидаемая ошибка {StatusCode} {Path}: {Message}",
+                    statusCode, context.Request.Path, ex.Message);
+
+            // Пишем в ErrorLog только серверные ошибки (>=500), чтобы не засорять БД
+            // ожидаемыми 4xx.
+            if (statusCode >= 500)
             {
-                return;
+                try
+                {
+                    db.ErrorLogs.Add(new ErrorLog
+                    {
+                        Timestamp  = DateTime.UtcNow,
+                        Level      = "Error",
+                        Message    = $"{ex.GetType().Name}: {ex.Message}",
+                        StackTrace = ex.StackTrace
+                    });
+                    await db.SaveChangesAsync();
+                }
+                catch
+                {
+                    // Запись в ErrorLog не должна ронять обработчик
+                }
             }
 
-            var statusCode = ex switch
+            if (!context.Response.HasStarted)
             {
-                ArgumentException => StatusCodes.Status400BadRequest,
-                UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
-                KeyNotFoundException => StatusCodes.Status404NotFound,
-                _ => StatusCodes.Status500InternalServerError
-            };
-
-            context.Response.Clear();
-            context.Response.StatusCode = statusCode;
-            context.Response.ContentType = "application/json; charset=utf-8";
-            await context.Response.WriteAsJsonAsync(new
-            {
-                error = ex.Message,
-                status = statusCode
-            });
+                context.Response.Clear();
+                context.Response.StatusCode  = statusCode;
+                context.Response.ContentType = "application/json";
+                await context.Response.WriteAsync(JsonSerializer.Serialize(new { error = userMessage }));
+            }
         }
     }
 
-    private async Task PersistErrorAsync(IServiceScopeFactory scopeFactory, Exception ex)
+    private static (int StatusCode, string UserMessage) MapException(Exception ex) => ex switch
     {
-        try
+        // ── Доменные, которые мы бросаем осознанно ──────────────────────
+        ConflictException ce           => (StatusCodes.Status409Conflict, ce.Message),
+        ArgumentException ae           => (StatusCodes.Status400BadRequest, ae.Message),
+        KeyNotFoundException knf       => (StatusCodes.Status404NotFound, knf.Message),
+        ForbiddenException fe          => (StatusCodes.Status403Forbidden, fe.Message),
+        UnauthorizedAccessException ua => (StatusCodes.Status401Unauthorized, ua.Message),
+        InvalidOperationException io   => (StatusCodes.Status400BadRequest, io.Message),
+
+        // ── Уникальные ограничения БД (гонки, которые не поймали явно) ───
+        DbUpdateException { InnerException: PostgresException pg } => pg.SqlState switch
         {
-            using var scope = scopeFactory.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            db.ErrorLogs.Add(new ErrorLog
-            {
-                Timestamp = DateTime.UtcNow,
-                Level = "Error",
-                Message = ex.Message,
-                StackTrace = ex.StackTrace
-            });
-            await db.SaveChangesAsync();
-        }
-        catch (Exception inner)
-        {
-            _logger.LogError(inner, "Не удалось сохранить запись об ошибке в ErrorLog.");
-        }
-    }
+            // 23505 unique_violation
+            "23505" => (StatusCodes.Status409Conflict,
+                        pg.ConstraintName switch
+                        {
+                            "ux_actual_expenses_doc" => "Документ с таким номером уже введён по этой статье в этом периоде.",
+                            _                        => "Нарушено уникальное ограничение. Проверьте данные.",
+                        }),
+            // 23503 foreign_key_violation
+            "23503" => (StatusCodes.Status400BadRequest, "Связанная запись не найдена или уже удалена."),
+            // 23502 not_null_violation
+            "23502" => (StatusCodes.Status400BadRequest, "Обязательное поле не заполнено."),
+            _       => (StatusCodes.Status500InternalServerError, "Ошибка базы данных.")
+        },
+
+        DbUpdateException du when du.InnerException?.Message.Contains("duplicate", StringComparison.OrdinalIgnoreCase) == true
+            => (StatusCodes.Status409Conflict, "Запись с такими данными уже существует."),
+
+        // ── Всё остальное ────────────────────────────────────────────────
+        _ => (StatusCodes.Status500InternalServerError, "Внутренняя ошибка сервера. Повторите позже.")
+    };
 }

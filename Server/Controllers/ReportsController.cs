@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Server.Infrastructure;
 using Server.Security;
 using Server.Services;
 using Shared.Dtos;
@@ -18,12 +19,12 @@ public class ReportsController : ControllerBase
     }
 
     [HttpGet]
-    [AuthorizeRole]
+    [AuthorizeRole("Главный экономист", "Директор", "Администратор", "Бухгалтер", "Руководитель отдела")]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken) =>
         Ok(await _reports.GetAllAsync(cancellationToken));
 
     [HttpGet("{id:int}")]
-    [AuthorizeRole]
+    [AuthorizeRole("Главный экономист", "Директор", "Администратор", "Бухгалтер", "Руководитель отдела")]
     public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
     {
         try { return Ok(await _reports.GetByIdAsync(id, cancellationToken)); }
@@ -31,7 +32,7 @@ public class ReportsController : ControllerBase
     }
 
     [HttpGet("{id:int}/download")]
-    [AuthorizeRole]
+    [AuthorizeRole("Главный экономист", "Директор", "Администратор", "Бухгалтер", "Руководитель отдела")]
     public async Task<IActionResult> Download(int id, CancellationToken cancellationToken)
     {
         try
@@ -49,8 +50,7 @@ public class ReportsController : ControllerBase
     {
         try
         {
-            var userId = HttpContext.Items["UserId"] is int uid ? uid : 0;
-            return Ok(await _reports.CreateAsync(request.SmetaId, userId, cancellationToken));
+            return Ok(await _reports.CreateAsync(request.SmetaId, HttpContext.CurrentUserId(), cancellationToken));
         }
         catch (KeyNotFoundException ex) { return NotFound(new { error = ex.Message }); }
     }
@@ -61,8 +61,7 @@ public class ReportsController : ControllerBase
     {
         try
         {
-            var userId = HttpContext.Items["UserId"] is int uid ? uid : 0;
-            return Ok(await _reports.ApproveAsync(id, userId, cancellationToken));
+            return Ok(await _reports.ApproveAsync(id, HttpContext.CurrentUserId(), cancellationToken));
         }
         catch (KeyNotFoundException ex) { return NotFound(new { error = ex.Message }); }
         catch (InvalidOperationException ex) { return Conflict(new { error = ex.Message }); }

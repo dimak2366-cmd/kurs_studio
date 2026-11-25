@@ -31,7 +31,7 @@
                 <DataGridTextColumn Header="ID"             Binding="{Binding Id}" IsReadOnly="True" Width="50"/>
                 <DataGridTextColumn Header="Наименование"   Binding="{Binding Name}" IsReadOnly="True" Width="*"/>
                 <DataGridTextColumn Header="КОСГУ"          Binding="{Binding KosguCode}" IsReadOnly="True" Width="80"/>
-                <DataGridTextColumn Header="План, BYN"      Binding="{Binding PlanAmount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" Width="120"/>
+                <DataGridTextColumn Header="План, BYN"      Binding="{Binding PlanAmount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsReadOnly="True" Width="120"/>
                 <DataGridTextColumn Header="Лимит, BYN"     Binding="{Binding LimitAmount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" Width="120"/>
                 <DataGridTextColumn Header="Кол-во"         Binding="{Binding Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" Width="90"/>
                 <DataGridTextColumn Header="Цена, BYN"      Binding="{Binding Price, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" Width="110"/>

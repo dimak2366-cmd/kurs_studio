@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Server.Infrastructure;
 using Server.Security;
 using Server.Services;
 using Shared.Dtos;
@@ -46,10 +47,6 @@ public class SmetaController : ControllerBase
         catch (UnauthorizedAccessException ex) { return StatusCode(403, new { error = ex.Message }); }
     }
 
-    /// <summary>
-    /// Все статьи расходов всех смет проекта одним запросом.
-    /// Используется в диалоге подачи заявки, чтобы избежать N+1 на клиенте.
-    /// </summary>
     [HttpGet("items/by-project/{projectId:int}")]
     [AuthorizeRole]
     public async Task<IActionResult> GetItemsByProject(int projectId, CancellationToken cancellationToken)
@@ -70,7 +67,7 @@ public class SmetaController : ControllerBase
     {
         try
         {
-            var dto = await _smeta.CreateAsync(request, CurrentUserId() ?? 0, cancellationToken);
+            var dto = await _smeta.CreateAsync(request, HttpContext.CurrentUserId(), cancellationToken);
             return CreatedAtAction(nameof(GetById), new { id = dto.Id }, dto);
         }
         catch (ArgumentException ex) { return BadRequest(new { error = ex.Message }); }
@@ -84,7 +81,7 @@ public class SmetaController : ControllerBase
     {
         try
         {
-            return Ok(await _smeta.UpdatePlanAmountsAsync(id, request, CurrentUserId() ?? 0, cancellationToken));
+            return Ok(await _smeta.UpdatePlanAmountsAsync(id, request, HttpContext.CurrentUserId(), cancellationToken));
         }
         catch (KeyNotFoundException ex) { return NotFound(new { error = ex.Message }); }
         catch (ArgumentException ex) { return BadRequest(new { error = ex.Message }); }
@@ -97,7 +94,7 @@ public class SmetaController : ControllerBase
     {
         try
         {
-            return Ok(await _smeta.ApproveAsync(id, CurrentUserId() ?? 0, cancellationToken));
+            return Ok(await _smeta.ApproveAsync(id, HttpContext.CurrentUserId(), cancellationToken));
         }
         catch (KeyNotFoundException ex) { return NotFound(new { error = ex.Message }); }
         catch (InvalidOperationException ex) { return Conflict(new { error = ex.Message }); }
@@ -109,7 +106,7 @@ public class SmetaController : ControllerBase
     {
         try
         {
-            return Ok(await _smeta.RejectAsync(id, request.Reason, CurrentUserId() ?? 0, cancellationToken));
+            return Ok(await _smeta.RejectAsync(id, request.Reason, HttpContext.CurrentUserId(), cancellationToken));
         }
         catch (KeyNotFoundException ex) { return NotFound(new { error = ex.Message }); }
         catch (ArgumentException ex) { return BadRequest(new { error = ex.Message }); }
@@ -122,7 +119,7 @@ public class SmetaController : ControllerBase
     {
         try
         {
-            var dto = await _smeta.CreateChangeAsync(id, CurrentUserId() ?? 0, cancellationToken);
+            var dto = await _smeta.CreateChangeAsync(id, HttpContext.CurrentUserId(), cancellationToken);
             return Ok(dto);
         }
         catch (KeyNotFoundException ex) { return NotFound(new { error = ex.Message }); }
@@ -135,12 +132,10 @@ public class SmetaController : ControllerBase
     {
         try
         {
-            await _smeta.DeleteAsync(id, CurrentUserId() ?? 0, cancellationToken);
+            await _smeta.DeleteAsync(id, HttpContext.CurrentUserId(), cancellationToken);
             return Ok(new { success = true });
         }
         catch (KeyNotFoundException ex) { return NotFound(new { error = ex.Message }); }
         catch (InvalidOperationException ex) { return Conflict(new { error = ex.Message }); }
     }
-
-    private int? CurrentUserId() => HttpContext.Items["UserId"] is int id ? id : null;
 }
